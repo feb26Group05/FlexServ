@@ -1,0 +1,128 @@
+# =========================
+# Node.js / Express
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# =========================
+# React (Vite)
+# =========================
+dist/
+build/
+.vite/
+vite.config.ts.timestamp-*
+vite.config.js.timestamp-*
+
+# Coverage
+coverage/
+
+# Cache
+.cache/
+.eslintcache
+
+# =========================
+# Spring Boot / Java
+# =========================
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Spring Boot Logs
+*.log
+
+# Application Properties (if containing secrets)
+application-local.properties
+application-local.yml
+application-prod.properties
+application-prod.yml
+
+# =========================
+# IDE Files
+# =========================
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+.history/
+
+# NetBeans
+nbproject/private/
+
+# =========================
+# Operating System Files
+# =========================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# =========================
+# MySQL
+# =========================
+
+# Database dumps
+*.sql
+*.dump
+
+# MySQL Workbench
+*.mwb
+
+# =========================
+# Temporary Files
+# =========================
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+
+# =========================
+# Testing
+# =========================
+coverage/
+reports/
+
+# =========================
+# Misc
+# =========================
+*.pid
+*.seed
