@@ -11,7 +11,6 @@ const register = async (req, res) => {
       email,
       phone,
       password,
-      confirmPassword,
       role_id,
     } = req.body;
 
@@ -21,8 +20,7 @@ const register = async (req, res) => {
       !lastName ||
       !email ||
       !phone ||
-      !password ||
-      !confirmPassword
+      !password
     ) {
       return res.status(400).json({
         success: false,
@@ -30,13 +28,7 @@ const register = async (req, res) => {
       });
     }
 
-    // Check password match
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Passwords do not match",
-      });
-    }
+    
 
     // Check existing user
     const [existingUser] = await db.query(
