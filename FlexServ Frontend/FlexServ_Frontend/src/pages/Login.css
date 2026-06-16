@@ -1,0 +1,264 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.login-container {
+  min-height: 100vh;
+
+  background-image:
+    linear-gradient(
+      rgba(0,0,0,0.45),
+      rgba(0,0,0,0.45)
+    ),
+    url("https://images.unsplash.com/photo-1505693416388-ac5ce068fe85");
+
+  background-size: cover;
+  background-position: center;
+}
+
+.overlay {
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 60px 100px;
+}
+
+.left-section {
+  color: white;
+  width: 45%;
+}
+
+.logo h1 {
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.logo span {
+  color: #ff7a00;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.hero-content {
+  margin-top: 80px;
+}
+
+.hero-content h2 {
+  font-size: 72px;
+  line-height: 1.1;
+  margin-bottom: 25px;
+}
+
+.hero-content p {
+  font-size: 26px;
+  color: #ddd;
+  line-height: 1.6;
+}
+
+.features {
+  display: flex;
+  gap: 50px;
+  margin-top: 100px;
+}
+
+.features div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.features svg {
+  font-size: 34px;
+}
+
+.features span {
+  text-align: center;
+  font-size: 16px;
+}
+
+/* Login Card */
+
+.login-card {
+  width: 550px;
+
+  background: rgba(15, 15, 15, 0.75);
+
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  border-radius: 30px;
+
+  padding: 50px;
+  color: white;
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.45);
+}
+
+.login-card h1 {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+
+.login-card p {
+  color: #bdbdbd;
+  margin-bottom: 35px;
+}
+
+.input-group {
+  margin-bottom: 25px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 15px;
+}
+
+.input-box {
+  display: flex;
+  align-items: center;
+
+  background: rgba(255,255,255,0.08);
+
+  border: 1px solid rgba(255,255,255,0.15);
+
+  border-radius: 14px;
+
+  padding: 0 18px;
+}
+
+.input-box svg {
+  color: #aaa;
+}
+
+.input-box input {
+  width: 100%;
+  padding: 18px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: white;
+  font-size: 15px;
+}
+
+.forgot {
+  display: block;
+  text-align: right;
+  color: #3d8cff;
+  text-decoration: none;
+  margin-bottom: 30px;
+}
+
+.login-btn {
+  width: 100%;
+  border: none;
+
+  background: #ff6b00;
+
+  color: white;
+
+  padding: 18px;
+
+  border-radius: 14px;
+
+  font-size: 20px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background: #ff7f21;
+}
+
+.divider {
+  margin: 30px 0;
+  text-align: center;
+  position: relative;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 42%;
+  height: 1px;
+  background: rgba(255,255,255,0.2);
+}
+
+.divider::before {
+  left: 0;
+}
+
+.divider::after {
+  right: 0;
+}
+
+.social-btn {
+  width: 100%;
+  padding: 16px;
+
+  border-radius: 14px;
+
+  border: 1px solid rgba(255,255,255,0.15);
+
+  background: transparent;
+
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 15px;
+
+  cursor: pointer;
+}
+
+.social-btn:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.register {
+  margin-top: 25px;
+  text-align: center;
+  color: #ccc;
+}
+
+.register a {
+  color: #3d8cff;
+  text-decoration: none;
+}
+
+@media (max-width: 992px) {
+  .overlay {
+    flex-direction: column;
+    padding: 30px;
+  }
+
+  .left-section {
+    width: 100%;
+    margin-bottom: 40px;
+  }
+
+  .hero-content h2 {
+    font-size: 48px;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 550px;
+  }
+}
