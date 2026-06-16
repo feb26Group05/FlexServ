@@ -8,6 +8,7 @@ require("../middleware/authMiddleware");
 
 const {
 // here we need to have register function
+  register,
   login,
   getCurrentUser
 } = require("../controllers/authController");
@@ -19,8 +20,7 @@ router.get(
 );
 
 // here we need to have 
-// router.post("/register", register);
-
+router.post("/register", register);
 router.post("/login", login);
 
 module.exports = router;
