@@ -5,30 +5,28 @@ const jwt = require("jsonwebtoken");
 // Register function
 const register = async (req, res) => {
   try {
-    const {
-      firstName,
-      lastName,
-      email,
-      phone,
-      password,
-      role_id,
-    } = req.body;
+    const { firstName, lastName, email, phone, password, role } = req.body;
 
     // Validate fields
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !phone ||
-      !password
-    ) {
+    if (!firstName || !email || !phone || !password) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
-    
+    const [roles] = await db.query("SELECT id FROM roles WHERE role_name = ?", [
+      role,
+    ]);
+
+    if (roles.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role",
+      });
+    }
+
+    const role_id = roles[0].id;
 
     // Check existing user
     const [existingUser] = await db.query(
