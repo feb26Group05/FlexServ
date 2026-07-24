@@ -1,18 +1,97 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
-import Login from './pages/Login'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+
+import api from "./api/api";
+
+import { restoreSession } from "./redux/authSlice";
+
+import Login from "./pages/Login";
+// import Register from "./pages/Register";
+
+// import UserDashboard from "./pages/UserDashboard";
+// import ProviderDashboard from "./pages/ProviderDashboard";
+// import AdminDashboard from "./pages/AdminDashboard";
+
+// import ProtectedRoute from "./routes/ProtectedRoute";
+// import RoleProtectedRoute from "./routes/RoleProtectedRoute";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) return;
+
+      try {
+        const response = await api.get("/auth/me");
+
+        dispatch(
+          restoreSession(response.data.user)
+        );
+      } catch (error) {
+        localStorage.removeItem("token");
+      }
+    };
+
+    loadUser();
+  }, [dispatch]);
 
   return (
-    <>
-      <Login/>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        {/* Public Routes */}
+
+        <Route path="/" element={<Login />} />
+
+        {/* <Route
+          path="/register"
+          element={<Register />}
+        /> */}
+
+        {/* User Dashboard */}
+
+        {/* <Route
+          path="/user"
+          element={
+            <ProtectedRoute>
+              <RoleProtectedRoute allowedRole="USER">
+                <UserDashboard />
+              </RoleProtectedRoute>
+            </ProtectedRoute>
+          }
+        /> */}
+
+        {/* Service Provider Dashboard */}
+
+        {/* <Route
+          path="/provider"
+          element={
+            <ProtectedRoute>
+              <RoleProtectedRoute allowedRole="SERVICE_PROVIDER">
+                <ProviderDashboard />
+              </RoleProtectedRoute>
+            </ProtectedRoute>
+          }
+        /> */}
+
+        {/* Admin Dashboard */}
+
+        {/* <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <RoleProtectedRoute allowedRole="ADMIN">
+                <AdminDashboard />
+              </RoleProtectedRoute>
+            </ProtectedRoute>
+          }
+        /> */}
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
