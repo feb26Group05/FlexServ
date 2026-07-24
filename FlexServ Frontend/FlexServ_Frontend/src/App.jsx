@@ -3,18 +3,10 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 import api from "./api/api";
-
 import { restoreSession } from "./redux/authSlice";
 
 import Login from "./pages/Login";
-// import Register from "./pages/Register";
-
-// import UserDashboard from "./pages/UserDashboard";
-// import ProviderDashboard from "./pages/ProviderDashboard";
-// import AdminDashboard from "./pages/AdminDashboard";
-
-// import ProtectedRoute from "./routes/ProtectedRoute";
-// import RoleProtectedRoute from "./routes/RoleProtectedRoute";
+import Register from "./pages/Registration/Register";
 
 function App() {
   const dispatch = useDispatch();
@@ -27,10 +19,7 @@ function App() {
 
       try {
         const response = await api.get("/auth/me");
-
-        dispatch(
-          restoreSession(response.data.user)
-        );
+        dispatch(restoreSession(response.data.user));
       } catch (error) {
         localStorage.removeItem("token");
       }
@@ -46,10 +35,7 @@ function App() {
 
         <Route path="/" element={<Login />} />
 
-        {/* <Route
-          path="/register"
-          element={<Register />}
-        /> */}
+        <Route path="/register" element={<Register />} />
 
         {/* User Dashboard */}
 
