@@ -9,6 +9,8 @@ import com.flexserv.dto.response.LoginResponse;
 import com.flexserv.dto.response.UserResponse;
 import com.flexserv.entity.Role;
 import com.flexserv.entity.User;
+import com.flexserv.exception.InvalidCredentialsException;
+import com.flexserv.exception.UserAlreadyExistsException;
 import com.flexserv.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,11 +26,11 @@ public class AuthServiceImpl implements AuthService {
     public UserResponse register(RegisterRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("Email already exists");
+        	throw new UserAlreadyExistsException("Email already exists");
         }
 
         if (userRepository.existsByPhone(request.getPhone())) {
-            throw new RuntimeException("Phone number already exists");
+        	throw new UserAlreadyExistsException("Phone number already exists");
         }
 
         User user = new User();
@@ -64,11 +66,11 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email or password"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
 
         
         if (!user.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("Invalid email or password");
+        	throw new InvalidCredentialsException("Invalid email or password");
         }
 
         return new LoginResponse(
