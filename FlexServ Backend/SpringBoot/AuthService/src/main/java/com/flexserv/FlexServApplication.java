@@ -1,4 +1,4 @@
-package com.FlexServ.FlexServ;
+package com.flexserv;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,8 +1,8 @@
-package com.FlexServ.FlexServ.repository;
+package com.flexserv.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.FlexServ.FlexServ.entity.User;
+import com.flexserv.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 

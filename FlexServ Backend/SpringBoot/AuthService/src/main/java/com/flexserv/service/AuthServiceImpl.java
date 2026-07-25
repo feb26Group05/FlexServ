@@ -1,13 +1,13 @@
-package com.FlexServ.FlexServ.service;
+package com.flexserv.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.FlexServ.FlexServ.entity.User;
-import com.FlexServ.FlexServ.repository.UserRepository;
+import com.flexserv.entity.User;
+import com.flexserv.repository.UserRepository;
 
 @Service
-public class AuthService {
+public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private UserRepository userRepository;
