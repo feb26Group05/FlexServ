@@ -1,4 +1,4 @@
-package com.FlexServ.FlexServ.entity;
+package com.flexserv.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -17,13 +17,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
-@Table(name = "addresses")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name="addresses")
 public class Address {
 
     @Id
@@ -53,11 +52,5 @@ public class Address {
     @JsonIgnore
     private User user;
     
-    public void setUser(User user) {
-    	this.user = user;
-    }
     
-    public User getUser() {
-    	return this.user;
-    }
 }
