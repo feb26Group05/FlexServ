@@ -1,9 +1,14 @@
 package com.flexserv.service;
 
-import com.flexserv.entity.User;
+import com.flexserv.dto.request.LoginRequest;
+import com.flexserv.dto.request.RegisterRequest;
+import com.flexserv.dto.response.LoginResponse;
+import com.flexserv.dto.response.UserResponse;
 
 public interface AuthService 
 {
-	 public User register(User user);
+	UserResponse register(RegisterRequest request);
+
+    LoginResponse login(LoginRequest request);
 
 }
