@@ -1,13 +1,14 @@
 package com.flexserv.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.flexserv.dto.request.LoginRequest;
 import com.flexserv.dto.request.RegisterRequest;
 import com.flexserv.dto.response.LoginResponse;
 import com.flexserv.dto.response.UserResponse;
-import com.flexserv.entity.User;
 import com.flexserv.entity.Role;
+import com.flexserv.entity.User;
 import com.flexserv.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponse register(RegisterRequest request) {
@@ -35,10 +37,10 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(request.getEmail());
         user.setPhone(request.getPhone());
 
-        // Password will be encrypted later using BCrypt
-        user.setPassword(request.getPassword());
+        
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        // Every new registration is a CUSTOMER
+       
         user.setRole(Role.CUSTOMER);
 
      
@@ -64,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email or password"));
 
-        // BCrypt password verification will be added later
+        
         if (!user.getPassword().equals(request.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
