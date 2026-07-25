@@ -1,47 +1,50 @@
 package com.flexserv.controller;
 
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.flexserv.entity.User;
+import com.flexserv.dto.request.LoginRequest;
+import com.flexserv.dto.request.RegisterRequest;
+import com.flexserv.dto.response.LoginResponse;
+import com.flexserv.dto.response.UserResponse;
 import com.flexserv.service.AuthService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
-   @PostMapping("/register")
-public ResponseEntity<?> register(@RequestBody User user) {
+    /**
+     * Register a new user
+     */
+    @PostMapping("/register")
+    public ResponseEntity<UserResponse> registerUser(
+            @Valid @RequestBody RegisterRequest request) {
 
-    try {
+        UserResponse response = authService.register(request);
 
-        User savedUser = authService.register(user);
-
-        return ResponseEntity.ok(
-                Map.of(
-                        "message", "Registration Successful",
-                        "user", savedUser
-                )
-        );
-
-    } catch (RuntimeException e) {
-
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(
-                        Map.of("message", e.getMessage())
-                );
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
-}
+
+    /**
+     * Login existing user
+     */
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> loginUser(
+            @Valid @RequestBody LoginRequest request) {
+
+        LoginResponse response = authService.login(request);
+
+        return ResponseEntity.ok(response);
+    }
+
 }
