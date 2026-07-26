@@ -2,14 +2,22 @@ package com.flexserv.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.flexserv.dto.auth.AuthenticationResult;
 import com.flexserv.dto.request.LoginRequest;
 import com.flexserv.dto.request.RegisterRequest;
 import com.flexserv.dto.response.LoginResponse;
 import com.flexserv.dto.response.UserResponse;
+import com.flexserv.payload.ApiResponse;
 import com.flexserv.service.AuthService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -21,30 +29,48 @@ public class AuthController {
 
     private final AuthService authService;
 
-    /**
-     * Register a new user
-     */
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> registerUser(
+    public ResponseEntity<ApiResponse<UserResponse>> registerUser(
             @Valid @RequestBody RegisterRequest request) {
 
-        UserResponse response = authService.register(request);
+        UserResponse user = authService.register(request);
+
+        ApiResponse<UserResponse> apiResponse =
+                new ApiResponse<>(
+                        true,
+                        "User Registered Successfully",
+                        user
+                );
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(response);
+                .body(apiResponse);
     }
 
-    /**
-     * Login existing user
-     */
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(
-            @Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse<LoginResponse>> loginUser(
+            @Valid @RequestBody LoginRequest request,
+            HttpServletResponse response) {
 
-        LoginResponse response = authService.login(request);
+        AuthenticationResult authResult = authService.login(request);
 
-        return ResponseEntity.ok(response);
+        Cookie cookie = new Cookie("JWT", authResult.getToken());
+
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);          // true in production (HTTPS)
+        cookie.setPath("/");
+        cookie.setMaxAge(15 * 60);
+
+        response.addCookie(cookie);
+
+        ApiResponse<LoginResponse> apiResponse =
+                new ApiResponse<>(
+                        true,
+                        "Login Successful",
+                        authResult.getLoginResponse()
+                );
+
+        return ResponseEntity.ok(apiResponse);
     }
 
 }
