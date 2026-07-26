@@ -17,6 +17,4 @@ public class LoginResponse {
 
     private Role role;
 
-    private String message;
-
 }
