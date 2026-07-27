@@ -63,17 +63,17 @@ export default function Login() {
                 email,
                 password,
             });
+            
+            dispatch(loginSuccess(res.data.data));
+            
+            const role = res.data.data.role;
 
-            dispatch(loginSuccess(res.data));
-
-            const role = res.data.user.role;
-
-            if (role === "USER") {
+            if (role === "CUSTOMER") {
                 navigate("/user");
             } else if (role === "SERVICE_PROVIDER") {
                 navigate("/provider");
-            } else {
-                navigate("/ADMIN");
+            } else if (role === "ADMIN") {
+                navigate("/admin");
             }
 
         } catch (err) {
