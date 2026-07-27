@@ -70,7 +70,7 @@ export default function Login() {
 
             if (role === "CUSTOMER") {
                 navigate("/user");
-            } else if (role === "SERVICE_PROVIDER") {
+            } else if (role === "PROVIDER") {
                 navigate("/provider");
             } else if (role === "ADMIN") {
                 navigate("/admin");

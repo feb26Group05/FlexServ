@@ -200,7 +200,7 @@ const handleSubmit = async (e) => {
                 </option>
 
                 <option value="USER">User</option>
-                <option value="SERVICE_PROVIDER">Service Provider</option>
+                <option value="PROVIDER">Service Provider</option>
               </select>
             </div>
           </div>
