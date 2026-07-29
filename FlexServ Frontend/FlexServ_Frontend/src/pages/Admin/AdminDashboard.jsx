@@ -379,7 +379,7 @@ export default function AdminDashboard() {
               <FaShieldAlt />
             </div>
             <div className="brand-info">
-              <h1>FlexServ Admin Portal</h1>
+              <h1>FlexServ <span>ADMIN PORTAL</span></h1>
               <p>
                 <span className="status-indicator"></span> Standalone Microservice Engine (Port 8082)
               </p>
