@@ -9,8 +9,8 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import api from "../api/api";
-import { loginSuccess } from "../redux/authSlice";
+import api from "../../api/api";
+import { loginSuccess } from "../../redux/authSlice";
 
 export default function Login() {
 
