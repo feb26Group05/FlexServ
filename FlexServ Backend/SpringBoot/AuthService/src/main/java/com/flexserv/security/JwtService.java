@@ -11,6 +11,7 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.flexserv.entity.Admin;
 import com.flexserv.entity.User;
 
 import io.jsonwebtoken.Claims;
@@ -27,7 +28,7 @@ public class JwtService {
     private long jwtExpiration;
 
     /**
-     * Generate JWT
+     * Generate JWT for User
      */
     public String generateToken(User user) {
 
@@ -39,8 +40,41 @@ public class JwtService {
     }
 
     /**
+     * Generate JWT for Admin
+     */
+    public String generateToken(Admin admin) {
+
+        Map<String, Object> claims = new HashMap<>();
+
+        claims.put("role", admin.getRole().name());
+
+        return buildTokenForAdmin(claims, admin);
+    }
+
+    /**
+     * Internal method to build token for Admin
+     */
+    private String buildTokenForAdmin(Map<String, Object> extraClaims, Admin admin) {
+
+        return Jwts.builder()
+
+                .claims(extraClaims)
+
+                .subject(String.valueOf(admin.getId()))
+
+                .issuedAt(new Date())
+
+                .expiration(new Date(System.currentTimeMillis() + jwtExpiration))
+
+                .signWith(getSigningKey())
+
+                .compact();
+    }
+
+    /**
      * Internal method to build token
      */
+
     private String buildToken(Map<String, Object> extraClaims, User user) {
 
         return Jwts.builder()

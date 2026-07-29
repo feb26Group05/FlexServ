@@ -8,6 +8,7 @@ import { restoreSession } from "./redux/authSlice";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Registration/Register";
 import HomePage from "./pages/Home/HomePage";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 
 function App() {
   const dispatch = useDispatch();
@@ -40,47 +41,12 @@ function App() {
 
         <Route path="/" element={<HomePage/>} />
 
-        {/* User Dashboard */}
-
-        {/* <Route
-          path="/user"
-          element={
-            <ProtectedRoute>
-              <RoleProtectedRoute allowedRole="USER">
-                <UserDashboard />
-              </RoleProtectedRoute>
-            </ProtectedRoute>
-          }
-        /> */}
-
-        {/* Service Provider Dashboard */}
-
-        {/* <Route
-          path="/provider"
-          element={
-            <ProtectedRoute>
-              <RoleProtectedRoute allowedRole="SERVICE_PROVIDER">
-                <ProviderDashboard />
-              </RoleProtectedRoute>
-            </ProtectedRoute>
-          }
-        /> */}
-
         {/* Admin Dashboard */}
 
-        {/* <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <RoleProtectedRoute allowedRole="ADMIN">
-                <AdminDashboard />
-              </RoleProtectedRoute>
-            </ProtectedRoute>
-          }
-        /> */}
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
-export default App;
+export default App;
