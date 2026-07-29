@@ -5,8 +5,9 @@ import { useDispatch } from "react-redux";
 import api from "./api/api";
 import { restoreSession } from "./redux/authSlice";
 
-import Login from "./pages/Login";
+import Login from "./pages/Login/Login";
 import Register from "./pages/Registration/Register";
+import HomePage from "./pages/Home/HomePage";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,9 +34,11 @@ function App() {
       <Routes>
         {/* Public Routes */}
 
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
 
         <Route path="/register" element={<Register />} />
+
+        <Route path="/" element={<HomePage/>} />
 
         {/* User Dashboard */}
 

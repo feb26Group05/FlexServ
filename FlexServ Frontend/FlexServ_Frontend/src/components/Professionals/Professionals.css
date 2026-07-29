@@ -1,0 +1,211 @@
+.professionals-section{
+
+
+    padding:90px 80px;
+
+
+}
+
+
+
+.professionals-section h2{
+
+
+    text-align:center;
+
+
+    font-size:42px;
+
+
+}
+
+
+
+.professionals-section>p{
+
+
+    text-align:center;
+
+
+    color:#ccc;
+
+
+    margin:15px 0 50px;
+
+
+}
+
+
+
+.professional-grid{
+
+
+    display:grid;
+
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(280px,1fr));
+
+
+    gap:30px;
+
+
+}
+
+
+
+.professional-card{
+
+
+    background:rgba(255,255,255,.08);
+
+
+    backdrop-filter:blur(20px);
+
+
+    border-radius:25px;
+
+
+    padding:35px;
+
+
+    text-align:center;
+
+
+    transition:.35s;
+
+
+}
+
+
+
+.professional-card:hover{
+
+
+    transform:translateY(-10px);
+
+
+    border:1px solid #ff6b00;
+
+
+}
+
+
+
+.professional-card img{
+
+
+    width:120px;
+
+
+    height:120px;
+
+
+    border-radius:50%;
+
+
+    object-fit:cover;
+
+
+    border:4px solid #ff6b00;
+
+
+    margin-bottom:20px;
+
+
+}
+
+
+
+.professional-card h3{
+
+
+    margin-bottom:10px;
+
+
+}
+
+
+
+.professional-card span{
+
+
+    color:#ff6b00;
+
+
+    display:block;
+
+
+    margin-bottom:15px;
+
+
+}
+
+
+
+.professional-card p{
+
+
+    color:#ddd;
+
+
+    margin-bottom:25px;
+
+
+}
+
+
+
+.professional-card button{
+
+
+    background:#ff6b00;
+
+
+    color:white;
+
+
+    border:none;
+
+
+    padding:12px 28px;
+
+
+    border-radius:30px;
+
+
+    cursor:pointer;
+
+
+}
+
+
+
+.professional-card button:hover{
+
+
+    background:#ff8425;
+
+
+}
+
+
+
+@media(max-width:768px){
+
+
+.professionals-section{
+
+    padding:60px 20px;
+
+}
+
+
+.professionals-section h2{
+
+    font-size:34px;
+
+}
+
+
+}
