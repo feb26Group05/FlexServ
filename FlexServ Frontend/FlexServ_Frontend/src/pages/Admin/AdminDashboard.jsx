@@ -15,14 +15,13 @@ import {
   FaTimes,
   FaSync,
   FaEye,
-  FaFilter,
-  FaArrowRight
+  FaFilter
 } from "react-icons/fa";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
 
-  // Active Directory Tab: "admins" | "users" | "providers" | "services" | "categories" | "bookings"
+  // Active Tab: "admins" | "users" | "providers" | "services" | "categories" | "bookings"
   const [activeTab, setActiveTab] = useState("admins");
 
   // Data State Lists
@@ -444,14 +443,14 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Main Directory Glass Panel */}
+        {/* Main Glass Panel */}
         <main className="main-glass-panel">
           <div className="tabs-bar">
             <button className={`tab-button ${activeTab === "admins" ? "active" : ""}`} onClick={() => setActiveTab("admins")}>
-              <FaShieldAlt /> Admins Directory
+              <FaShieldAlt /> Admins
             </button>
             <button className={`tab-button ${activeTab === "users" ? "active" : ""}`} onClick={() => setActiveTab("users")}>
-              <FaUsers /> Users Directory
+              <FaUsers /> Users
             </button>
             <button className={`tab-button ${activeTab === "providers" ? "active" : ""}`} onClick={() => setActiveTab("providers")}>
               <FaBriefcase /> Service Providers
@@ -522,7 +521,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Data Directory Table */}
+          {/* Data Table */}
           <div className="table-scroll-container">
             {loading ? (
               <div className="loader-box">Retrieving dataset from AdminService...</div>
@@ -621,7 +620,7 @@ export default function AdminDashboard() {
                       </td>
                       <td>Category: {item.categoryName}</td>
                       <td>
-                        <span style={{ color: "var(--brand-emerald)", fontWeight: "700" }}>${item.price}</span>
+                        <span style={{ color: "var(--brand-emerald, #10b981)", fontWeight: "700" }}>${item.price}</span>
                       </td>
                       <td>
                         <button className="btn-action-icon" onClick={() => openViewModal(item, "SERVICE")}>
@@ -660,7 +659,7 @@ export default function AdminDashboard() {
                       </td>
                       <td>Service: {item.serviceName} ({item.bookingDate})</td>
                       <td>
-                        <span style={{ color: "var(--brand-cyan)", fontWeight: "700" }}>{item.status || "CONFIRMED"}</span>
+                        <span style={{ color: "var(--brand-cyan, #38bdf8)", fontWeight: "700" }}>{item.status || "CONFIRMED"}</span>
                       </td>
                       <td>
                         <button className="btn-action-icon" onClick={() => openViewModal(item, "BOOKING")}>

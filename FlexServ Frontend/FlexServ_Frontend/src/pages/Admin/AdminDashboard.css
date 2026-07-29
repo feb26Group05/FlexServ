@@ -51,7 +51,7 @@ html, body {
   gap: 24px;
 }
 
-/* Glass Header - Matches Login/Register Glass Card Aesthetic */
+/* Glass Header */
 .glass-header {
   background: var(--glass-panel-bg);
   backdrop-filter: blur(18px);
@@ -492,7 +492,7 @@ html, body {
   font-weight: 600;
 }
 
-/* Modals - Exact Glass Overlay Style as Register/Login Card */
+/* Modals */
 .modal-overlay {
   position: fixed;
   inset: 0;
