@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import api from "../../api/api";
+import adminApi from "../../api/adminApi";
 import { loginSuccess } from "../../redux/authSlice";
 
 export default function Login() {
@@ -59,25 +60,35 @@ export default function Login() {
         }
 
         try {
-            const res = await api.post("/auth/login", {
-                email,
-                password,
-            });
-            
+            let res;
+            try {
+                // Try normal user login via AuthService (Port 8081)
+                res = await api.post("/auth/login", {
+                    email,
+                    password,
+                });
+            } catch (authErr) {
+                // Fallback to Admin login via AdminService (Port 8082)
+                res = await adminApi.post("/admin/login", {
+                    email,
+                    password,
+                });
+            }
+
             dispatch(loginSuccess(res.data.data));
-            
+
             const role = res.data.data.role;
 
-            if (role === "CUSTOMER") {
+            if (role === "CUSTOMER" || role === "USER") {
                 navigate("/user");
-            } else if (role === "PROVIDER") {
+            } else if (role === "PROVIDER" || role === "SERVICE_PROVIDER") {
                 navigate("/provider");
             } else if (role === "ADMIN") {
                 navigate("/admin");
             }
 
         } catch (err) {
-            alert(err.response?.data?.message || "Login Failed");
+            alert(err.response?.data?.message || "Invalid email or password");
         }
     };
 
