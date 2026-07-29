@@ -46,8 +46,12 @@ public class User {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable=false)
     private Role role; 
+
+    @Column(name = "is_active", nullable = false)
+    private Boolean isActive = true;
 
 
     @CreationTimestamp

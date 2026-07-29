@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -107,7 +108,20 @@ public class AdminController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    // Users GET Endpoints
+    @PatchMapping("/{id}/toggle-status")
+    public ResponseEntity<ApiResponse<AdminResponse>> toggleAdminStatus(@PathVariable Long id) {
+        AdminResponse admin = adminService.toggleAdminStatus(id);
+
+        ApiResponse<AdminResponse> apiResponse = new ApiResponse<>(
+                true,
+                "Admin Status Toggled Successfully",
+                admin
+        );
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    // Users Endpoints
     @GetMapping("/users")
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
 
@@ -150,7 +164,20 @@ public class AdminController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    // Service Providers GET Endpoints
+    @PatchMapping("/users/{id}/toggle-status")
+    public ResponseEntity<ApiResponse<UserResponse>> toggleUserStatus(@PathVariable Long id) {
+        UserResponse user = adminService.toggleUserStatus(id);
+
+        ApiResponse<UserResponse> apiResponse = new ApiResponse<>(
+                true,
+                "User Status Toggled Successfully",
+                user
+        );
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    // Service Providers Endpoints
     @GetMapping("/providers")
     public ResponseEntity<ApiResponse<List<ServiceProviderResponse>>> getAllProviders() {
 
@@ -179,7 +206,20 @@ public class AdminController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    // Services GET Endpoints
+    @PatchMapping("/providers/{id}/toggle-status")
+    public ResponseEntity<ApiResponse<ServiceProviderResponse>> toggleProviderStatus(@PathVariable Long id) {
+        ServiceProviderResponse provider = adminService.toggleProviderStatus(id);
+
+        ApiResponse<ServiceProviderResponse> apiResponse = new ApiResponse<>(
+                true,
+                "Service Provider Status Toggled Successfully",
+                provider
+        );
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    // Services Endpoints
     @GetMapping("/services")
     public ResponseEntity<ApiResponse<List<ServiceResponse>>> getAllServices() {
 
@@ -208,7 +248,20 @@ public class AdminController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    // Categories GET Endpoints
+    @PatchMapping("/services/{id}/toggle-status")
+    public ResponseEntity<ApiResponse<ServiceResponse>> toggleServiceStatus(@PathVariable Long id) {
+        ServiceResponse service = adminService.toggleServiceStatus(id);
+
+        ApiResponse<ServiceResponse> apiResponse = new ApiResponse<>(
+                true,
+                "Service Status Toggled Successfully",
+                service
+        );
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    // Categories Endpoints
     @GetMapping("/categories")
     public ResponseEntity<ApiResponse<List<CategoryResponse>>> getAllCategories() {
 
@@ -237,7 +290,20 @@ public class AdminController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    // Bookings GET Endpoints
+    @PatchMapping("/categories/{id}/toggle-status")
+    public ResponseEntity<ApiResponse<CategoryResponse>> toggleCategoryStatus(@PathVariable Long id) {
+        CategoryResponse category = adminService.toggleCategoryStatus(id);
+
+        ApiResponse<CategoryResponse> apiResponse = new ApiResponse<>(
+                true,
+                "Category Status Toggled Successfully",
+                category
+        );
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    // Bookings Endpoints
     @GetMapping("/bookings")
     public ResponseEntity<ApiResponse<List<BookingResponse>>> getAllBookings() {
 
@@ -260,6 +326,19 @@ public class AdminController {
         ApiResponse<BookingResponse> apiResponse = new ApiResponse<>(
                 true,
                 "Booking Details Retrieved Successfully",
+                booking
+        );
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    @PatchMapping("/bookings/{id}/toggle-status")
+    public ResponseEntity<ApiResponse<BookingResponse>> toggleBookingStatus(@PathVariable Long id) {
+        BookingResponse booking = adminService.toggleBookingStatus(id);
+
+        ApiResponse<BookingResponse> apiResponse = new ApiResponse<>(
+                true,
+                "Booking Status Toggled Successfully",
                 booking
         );
 

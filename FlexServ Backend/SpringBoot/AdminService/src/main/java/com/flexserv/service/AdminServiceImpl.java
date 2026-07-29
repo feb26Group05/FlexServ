@@ -208,6 +208,61 @@ public class AdminServiceImpl implements AdminService {
         return mapBookingToResponse(booking);
     }
 
+    // Status Toggles
+    @Override
+    public AdminResponse toggleAdminStatus(Long id) {
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Admin not found with ID: " + id));
+        admin.setIsActive(!Boolean.TRUE.equals(admin.getIsActive()));
+        Admin updated = adminRepository.save(admin);
+        return mapToResponse(updated);
+    }
+
+    @Override
+    public UserResponse toggleUserStatus(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + id));
+        user.setIsActive(!Boolean.TRUE.equals(user.getIsActive()));
+        User updated = userRepository.save(user);
+        return mapUserToResponse(updated);
+    }
+
+    @Override
+    public ServiceProviderResponse toggleProviderStatus(Long id) {
+        ServiceProvider provider = serviceProviderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Service Provider not found with ID: " + id));
+        provider.setIsActive(!Boolean.TRUE.equals(provider.getIsActive()));
+        ServiceProvider updated = serviceProviderRepository.save(provider);
+        return mapProviderToResponse(updated);
+    }
+
+    @Override
+    public ServiceResponse toggleServiceStatus(Long id) {
+        com.flexserv.entity.Service service = serviceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found with ID: " + id));
+        service.setIsActive(!Boolean.TRUE.equals(service.getIsActive()));
+        com.flexserv.entity.Service updated = serviceRepository.save(service);
+        return mapServiceToResponse(updated);
+    }
+
+    @Override
+    public CategoryResponse toggleCategoryStatus(Long id) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with ID: " + id));
+        category.setIsActive(!Boolean.TRUE.equals(category.getIsActive()));
+        Category updated = categoryRepository.save(category);
+        return mapCategoryToResponse(updated);
+    }
+
+    @Override
+    public BookingResponse toggleBookingStatus(Long id) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found with ID: " + id));
+        booking.setIsActive(!Boolean.TRUE.equals(booking.getIsActive()));
+        Booking updated = bookingRepository.save(booking);
+        return mapBookingToResponse(updated);
+    }
+
     // Mapper Helpers
     private AdminResponse mapToResponse(Admin admin) {
         return new AdminResponse(
@@ -217,20 +272,21 @@ public class AdminServiceImpl implements AdminService {
                 admin.getPhone(),
                 admin.getRole(),
                 admin.getDepartment(),
+                admin.getIsActive(),
                 admin.getCreatedAt()
         );
     }
 
     private UserResponse mapUserToResponse(User user) {
-        UserResponse response = new UserResponse();
-        response.setId(user.getId());
-        response.setName(user.getName());
-        response.setEmail(user.getEmail());
-        response.setPhone(user.getPhone());
-        response.setRole(user.getRole());
-        response.setActive(true);
-        response.setCreatedAt(user.getCreatedAt());
-        return response;
+        return new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getRole(),
+                user.getIsActive(),
+                user.getCreatedAt()
+        );
     }
 
     private ServiceProviderResponse mapProviderToResponse(ServiceProvider provider) {
@@ -245,7 +301,8 @@ public class AdminServiceImpl implements AdminService {
                 provider.getBio(),
                 provider.getIsVerified(),
                 provider.getRating(),
-                provider.getCompanyAvailable()
+                provider.getCompanyAvailable(),
+                provider.getIsActive()
         );
     }
 
@@ -257,7 +314,8 @@ public class AdminServiceImpl implements AdminService {
                 service.getName(),
                 service.getDescription(),
                 service.getPrice(),
-                service.getDuration()
+                service.getDuration(),
+                service.getIsActive()
         );
     }
 
@@ -265,7 +323,8 @@ public class AdminServiceImpl implements AdminService {
         return new CategoryResponse(
                 category.getId(),
                 category.getName(),
-                category.getDescription()
+                category.getDescription(),
+                category.getIsActive()
         );
     }
 
@@ -283,6 +342,7 @@ public class AdminServiceImpl implements AdminService {
                 booking.getBookingTime(),
                 booking.getStatus(),
                 booking.getTotalPrice(),
+                booking.getIsActive(),
                 booking.getCreatedAt()
         );
     }

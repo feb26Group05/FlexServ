@@ -26,4 +26,6 @@ public class ServiceResponse {
     private BigDecimal price;
 
     private Integer duration;
+
+    private Boolean isActive;
 }

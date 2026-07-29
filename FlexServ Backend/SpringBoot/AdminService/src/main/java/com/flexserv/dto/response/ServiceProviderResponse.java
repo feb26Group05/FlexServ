@@ -34,4 +34,6 @@ public class ServiceProviderResponse {
     private BigDecimal rating;
 
     private Boolean companyAvailable;
+
+    private Boolean isActive;
 }

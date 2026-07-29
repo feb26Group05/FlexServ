@@ -43,4 +43,12 @@ public interface AdminService {
     // Bookings
     List<BookingResponse> getAllBookings();
     BookingResponse getBookingById(Long id);
+
+    // Status Toggles
+    AdminResponse toggleAdminStatus(Long id);
+    UserResponse toggleUserStatus(Long id);
+    ServiceProviderResponse toggleProviderStatus(Long id);
+    ServiceResponse toggleServiceStatus(Long id);
+    CategoryResponse toggleCategoryStatus(Long id);
+    BookingResponse toggleBookingStatus(Long id);
 }
