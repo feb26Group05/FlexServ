@@ -353,6 +353,8 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("user");
     navigate("/login");
   };
 

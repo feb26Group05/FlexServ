@@ -75,9 +75,12 @@ export default function Login() {
                 });
             }
 
-            dispatch(loginSuccess(res.data.data));
+            const userData = res.data.data;
+            dispatch(loginSuccess(userData));
+            localStorage.setItem("userRole", userData.role);
+            localStorage.setItem("user", JSON.stringify(userData));
 
-            const role = res.data.data.role;
+            const role = userData.role;
 
             if (role === "CUSTOMER" || role === "USER") {
                 navigate("/user");

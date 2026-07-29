@@ -9,6 +9,7 @@ import Login from "./pages/Login/Login";
 import Register from "./pages/Registration/Register";
 import HomePage from "./pages/Home/HomePage";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const dispatch = useDispatch();
@@ -38,8 +39,15 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<HomePage />} />
 
-        {/* Admin Dashboard */}
-        <Route path="/admin" element={<AdminDashboard />} />
+        {/* Protected Admin Dashboard */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRole="ADMIN">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
