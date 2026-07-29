@@ -4,6 +4,7 @@ import {
     FaLock,
     FaShieldAlt,
     FaHeadset,
+    FaUserShield,
 } from "react-icons/fa";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -18,6 +19,7 @@ export default function Login() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const [loginType, setLoginType] = useState("user"); // "user" | "admin"
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -34,7 +36,7 @@ export default function Login() {
         if (!email.trim()) {
             tempErrors.email = "Email is required";
         } else if (
-            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email)
+            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email.trim())
         ) {
             tempErrors.email = "Enter a valid email";
         }
@@ -59,20 +61,29 @@ export default function Login() {
             return;
         }
 
+        const cleanEmail = email.trim().toLowerCase();
+
         try {
             let res;
-            try {
-                // Try normal user login via AuthService (Port 8081)
-                res = await api.post("/auth/login", {
-                    email,
-                    password,
-                });
-            } catch (authErr) {
-                // Fallback to Admin login via AdminService (Port 8082)
+            if (loginType === "admin") {
+                // Explicit Admin Service Login (Port 8082)
                 res = await adminApi.post("/admin/login", {
-                    email,
-                    password,
+                    email: cleanEmail,
+                    password: password,
                 });
+            } else {
+                // User Service Login (Port 8081) with automatic Admin fallback
+                try {
+                    res = await api.post("/auth/login", {
+                        email: cleanEmail,
+                        password: password,
+                    });
+                } catch (authErr) {
+                    res = await adminApi.post("/admin/login", {
+                        email: cleanEmail,
+                        password: password,
+                    });
+                }
             }
 
             const userData = res.data.data;
@@ -147,6 +158,51 @@ export default function Login() {
                     <h1>Welcome Back!</h1>
                     <p>Login to your account</p>
 
+                    {/* Portal Mode Switcher */}
+                    <div style={{
+                        display: "flex",
+                        background: "rgba(255, 255, 255, 0.1)",
+                        borderRadius: "8px",
+                        padding: "4px",
+                        marginBottom: "20px",
+                        gap: "6px"
+                    }}>
+                        <button
+                            type="button"
+                            onClick={() => setLoginType("user")}
+                            style={{
+                                flex: 1,
+                                padding: "8px 12px",
+                                border: "none",
+                                borderRadius: "6px",
+                                background: loginType === "user" ? "var(--primary-color, #4f46e5)" : "transparent",
+                                color: "#fff",
+                                fontWeight: "600",
+                                cursor: "pointer",
+                                transition: "all 0.2s"
+                            }}
+                        >
+                            <FaUser style={{ marginRight: "6px" }} /> User / Provider
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setLoginType("admin")}
+                            style={{
+                                flex: 1,
+                                padding: "8px 12px",
+                                border: "none",
+                                borderRadius: "6px",
+                                background: loginType === "admin" ? "linear-gradient(135deg, #6366f1, #a855f7)" : "transparent",
+                                color: "#fff",
+                                fontWeight: "600",
+                                cursor: "pointer",
+                                transition: "all 0.2s"
+                            }}
+                        >
+                            <FaUserShield style={{ marginRight: "6px" }} /> Admin Portal
+                        </button>
+                    </div>
+
                     {/* Email */}
                     <div className="input-group">
                         <label>Email</label>
@@ -156,7 +212,7 @@ export default function Login() {
 
                             <input
                                 type="text"
-                                placeholder="Enter email"
+                                placeholder={loginType === "admin" ? "admin@flexserv.com" : "Enter email"}
                                 value={email}
                                 className={errors.email ? "error" : ""}
                                 onChange={(e) => {
@@ -213,7 +269,7 @@ export default function Login() {
                         className="login-btn"
                         onClick={handleLogin}
                     >
-                        Login
+                        {loginType === "admin" ? "Login to Admin Portal" : "Login"}
                     </button>
 
                     <div className="register">
