@@ -1,130 +1,274 @@
-/* Background */
-body {
+/* ===========================
+   Global
+=========================== */
+
+* {
   margin: 0;
-  font-family: "Segoe UI", sans-serif;
-  background: #f4f6f9;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 
-/* Container */
-.register-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+html,
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-/* Card */
-.register-card {
-  width: 100%;
-  max-width: 500px;
-  background: rgba(15, 15, 15, 0.75);
-  border-radius: 15px;
-  padding: 25px;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
-  color: white;
-  max-height: 94vh;
-}
-
-/* Heading */
-.register-title {
-  text-align: center;
-  color: #1e3a8a;
-  margin-bottom: 15px;
-  font-size: 28px;
-  font-weight: 700;
-}
-
-/* Form Groups */
-.form-group {
-  margin-bottom: 12px;
-}
-
-/* Labels */
-.form-label {
-  font-weight: 600;
-  margin-bottom: 3px;
-  font-size: 14px;
-  display: block;
-}
-
-/* Inputs */
-.form-control,
-.form-select {
-  width: 100%;
-  height: 40px;
-  border-radius: 8px;
-  border: 1px solid #ced4da;
-  padding: 0 12px;
-  font-size: 15px;
-}
-
-.form-control:focus,
-.form-select:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 5px rgba(37, 99, 235, 0.3);
-}
-
-/* Button */
-.register-btn {
-  width: 100%;
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.register-btn:hover {
-  background: #1d4ed8;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .register-card {
-    background: rgba(15, 15, 15, 0.75);
-    margin: 20px;
-    padding: 20px;
-  }
-}
+/* ===========================
+   Background
+=========================== */
 
 .register-container {
   min-height: 100vh;
+
   background-image:
     linear-gradient(
-      rgba(0,0,0,0.45),
-      rgba(0,0,0,0.45)
+      rgba(0, 0, 0, 0.45),
+      rgba(0, 0, 0, 0.45)
     ),
     url("https://images.unsplash.com/photo-1505693416388-ac5ce068fe85");
 
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ===========================
+   Main Layout
+=========================== */
+
+.overlay {
+  min-height: 100vh;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 40px;
+  padding: 20px 60px;
+}
+
+/* ===========================
+   Left Section
+=========================== */
+
+.left-section {
+  width: 45%;
+  color: white;
+}
+
+.logo h1 {
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.logo span {
+  color: #ff7a00;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.hero-content {
+  margin-top: 40px;
+}
+
+.hero-content h2 {
+  font-size: clamp(35px, 2vw, 60px);
+  line-height: 1.1;
+  margin-bottom: 15px;
+}
+
+.hero-content p {
+  color: #ddd;
+  font-size: clamp(16px, 1.5vw, 22px);
+  line-height: 1.5;
+}
+
+/* ===========================
+   Features
+=========================== */
+
+.features {
+  display: flex;
+  gap: 30px;
+  margin-top: 50px;
+}
+
+.features div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.features svg {
+  font-size: 28px;
+}
+
+.features span {
+  text-align: center;
+  font-size: 14px;
+}
+
+/* ===========================
+   Register Card
+=========================== */
+
+.register-card {
+  width: 500px;
+
+  background: rgba(15, 15, 15, 0.75);
+
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 24px;
+
+  padding: 35px;
+
+  color: white;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+.register-card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.register-card::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.3);
+  border-radius: 20px;
+}
+
+/* ===========================
+   Headings
+=========================== */
+
+.register-card h1 {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.register-card p {
+  color: #bdbdbd;
+  margin-bottom: 25px;
+}
+
+/* ===========================
+   Name Row
+=========================== */
+
+.row {
+  display: flex;
+  gap: 15px;
+}
+
+.row .input-group {
+  flex: 1;
+}
+
+/* ===========================
+   Inputs
+=========================== */
+
+.input-group {
+  margin-bottom: 18px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
 }
 
 .input-box {
   display: flex;
   align-items: center;
 
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,.08);
 
-  border: 1px solid rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,.15);
 
-  border-radius: 14px;
+  border-radius: 12px;
 
-  padding: 0 12px;
+  padding: 0 15px;
 }
 
 .input-box svg {
   color: #aaa;
 }
 
+.input-box input,
+.custom-select {
+  width: 100%;
+
+  padding: 15px;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  color: white;
+
+  font-size: 14px;
+}
+
+.custom-select {
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.custom-select option {
+  color: black;
+}
+
+/* ===========================
+   Button
+=========================== */
+
+.register-btn {
+  width: 100%;
+
+  border: none;
+
+  background: #ff6b00;
+
+  color: white;
+
+  padding: 15px;
+
+  border-radius: 12px;
+
+  font-size: 18px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: .3s;
+}
+
+.register-btn:hover {
+  background: #ff7f21;
+}
+
+/* ===========================
+   Login Link
+=========================== */
+
 .register {
-  margin-top: 25px;
+  margin-top: 20px;
   text-align: center;
   color: #ccc;
+  font-size: 14px;
 }
 
 .register a {
@@ -132,31 +276,78 @@ body {
   text-decoration: none;
 }
 
-.button-section {
-  margin-top: 25px;
+/* ===========================
+   Errors
+=========================== */
+
+.error-text {
+  color: #ff4d4f;
+  font-size: 13px;
+  margin-top: 5px;
+  margin-left: 5px;
 }
 
-.custom-input {
-  width: 100%;
-  height: 40px;
+/* ===========================
+   Responsive
+=========================== */
 
-  background: transparent;
-  border: none;
-  outline: none;
+@media (max-width: 992px) {
 
-  color: white;
-  font-size: 15px;
+  .overlay {
+    flex-direction: column;
+    justify-content: center;
+
+    padding: 30px 20px;
+  }
+
+  .left-section {
+    width: 100%;
+    text-align: center;
+  }
+
+  .features {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .register-card {
+    width: 100%;
+    max-width: 520px;
+  }
 }
 
-.custom-input option {
-  color: black;
-}
-.custom-select {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+@media (max-width: 576px) {
 
-  background: transparent;
-  color: white;
-  cursor: pointer;
+  .overlay {
+    padding: 20px;
+  }
+
+  .logo h1 {
+    font-size: 34px;
+  }
+
+  .hero-content h2 {
+    font-size: 34px;
+  }
+
+  .hero-content p {
+    font-size: 15px;
+  }
+
+  .features {
+    gap: 20px;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .register-card {
+    padding: 25px;
+  }
+
+  .register-card h1 {
+    font-size: 30px;
+  }
 }

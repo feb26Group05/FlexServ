@@ -2,6 +2,15 @@ import { useState } from "react";
 import "./Register.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaLock,
+  FaUserTag,
+  FaShieldAlt,
+  FaHeadset,
+} from "react-icons/fa";
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -32,13 +41,13 @@ function Register() {
     } else if (
       !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)
     ) {
-      newErrors.email = "Invalid email";
+      newErrors.email = "Enter a valid email";
     }
 
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
     } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
-      newErrors.phone = "Enter a valid 10-digit Indian mobile number";
+      newErrors.phone = "Enter a valid 10-digit mobile number";
     }
 
     if (!formData.role) {
@@ -50,204 +59,296 @@ function Register() {
     } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
-    if (formData.confirmPassword !== formData.password) {
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Confirm your password";
+    } else if (formData.confirmPassword !== formData.password) {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
     setErrors(newErrors);
 
-    console.log("Validation Errors:", newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
-const handleChange = (e) => {
-  const { name, value } = e.target;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  setFormData((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
-  setErrors((prev) => ({
-    ...prev,
-    [name]: "",
-  }));
-};
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  if (!validate()) {
-    return;
-  }
-
-  const requestData = {
-    name: `${formData.firstName} ${formData.lastName}`,
-    email: formData.email,
-    phone: formData.phone,
-    password: formData.password,
-    role: formData.role,
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "",
+    }));
   };
 
-  try {
-    const response = await axios.post(
-      "http://localhost:8081/api/auth/register",
-      requestData
-    );
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    alert(response.data.message || "Registration Successful");
+    if (!validate()) return;
 
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      password: "",
-      confirmPassword: "",
-      role: "",
-    });
+    const requestData = {
+      name: `${formData.firstName} ${formData.lastName}`,
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password,
+      role: formData.role,
+    };
 
-    setErrors({});
-  } catch (error) {
-  console.log("Full Error:", error);
-  console.log("Response:", error.response);
-  console.log("Request:", error.request);
-  console.log("Message:", error.message);
+    try {
+      const response = await axios.post(
+        "http://localhost:8081/api/auth/register",
+        requestData
+      );
 
-  if (error.response) {
-    alert(error.response.data.message);
-  } else {
-    alert(error.message);
-  }
-  }
-};
+      alert(response.data.message || "Registration Successful");
+
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        password: "",
+        confirmPassword: "",
+        role: "",
+      });
+
+      setErrors({});
+    } catch (error) {
+      if (error.response) {
+        alert(error.response.data.message);
+      } else {
+        alert(error.message);
+      }
+    }
+  };
 
   return (
     <div className="register-container">
-      <div className="register-card">
-        <h2 className="register-title">FlexServ Registration</h2>
-
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">First Name</label>
-
-            <div className="input-box">
-              <input
-                type="text"
-                name="firstName"
-                className="custom-input"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-              />
-            </div>
+      <div className="overlay">
+        {/* Left Section */}
+        <div className="left-section">
+          <div className="logo">
+            <h1>FlexServ</h1>
+           
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Last Name</label>
+          <div className="hero-content">
+            <h2>
+              Join FlexServ
+              <br />
+              Today
+            </h2>
 
-            <div className="input-box">
-              <input
-                type="text"
-                name="lastName"
-                className="custom-input"
-                value={formData.lastName}
-                onChange={handleChange}
-              />
-            </div>
+            <p>
+              Create your account and connect with
+              <br />
+              trusted professionals instantly.
+            </p>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Email</label>
-            <div className="input-box">
-              <input
-                type="email"
-                name="email"
-                className="custom-input"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Phone</label>
-            <div className="input-box">
-              <input
-                type="tel"
-                name="phone"
-                className="custom-input"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Role</label>
-            <div className="input-box">
-              <select
-                name="role"
-                className="custom-input custom-select"
-                value={formData.role}
-                onChange={handleChange}
-              >
-                <option value="" disabled>
-                  Select Role
-                </option>
-
-                <option value="USER">User</option>
-                <option value="PROVIDER">Service Provider</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Password</label>
-
-            <div className="input-box">
-              <input
-                type="password"
-                name="password"
-                className="custom-input"
-                value={formData.password}
-                onChange={handleChange}
-              />
+          <div className="features">
+            <div>
+              <FaShieldAlt />
+              <span>Verified Professionals</span>
             </div>
 
-            {errors.password && (
-              <p className="error-message">{errors.password}</p>
-            )}
-          </div>
+            <div>
+              <FaShieldAlt />
+              <span>Secure Platform</span>
+            </div>
 
-          <div className="form-group">
-            <label className="form-label">Confirm Password</label>
-            <div className="input-box">
-              <input
-                type="password"
-                name="confirmPassword"
-                className="custom-input"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-              />
+            <div>
+              <FaHeadset />
+              <span>24/7 Support</span>
             </div>
           </div>
+        </div>
 
-          <div className="button-section">
-            <button type="submit" className="register-btn">
-              Register
+        {/* Register Card */}
+
+        <div className="register-card">
+          <h1>Create Account</h1>
+          <p>Register to continue</p>
+
+          <form onSubmit={handleSubmit}>
+            {/* Name Row */}
+
+            <div className="row">
+              <div className="input-group">
+                <label>First Name</label>
+
+                <div className="input-box">
+                  <FaUser />
+
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="First Name"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {errors.firstName && (
+                  <p className="error-text">{errors.firstName}</p>
+                )}
+              </div>
+
+              <div className="input-group">
+                <label>Last Name</label>
+
+                <div className="input-box">
+                  <FaUser />
+
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Last Name"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                {errors.lastName && (
+                  <p className="error-text">{errors.lastName}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Email */}
+
+            <div className="input-group">
+              <label>Email</label>
+
+              <div className="input-box">
+                <FaEnvelope />
+
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Enter Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+
+              {errors.email && (
+                <p className="error-text">{errors.email}</p>
+              )}
+            </div>
+
+            {/* Phone */}
+
+            <div className="input-group">
+              <label>Phone</label>
+
+              <div className="input-box">
+                <FaPhone />
+
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Enter Phone Number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                />
+              </div>
+
+              {errors.phone && (
+                <p className="error-text">{errors.phone}</p>
+              )}
+            </div>
+
+            {/* Role */}
+
+            <div className="input-group">
+              <label>Role</label>
+
+              <div className="input-box">
+                <FaUserTag />
+
+                <select
+                  name="role"
+                  className="custom-select"
+                  value={formData.role}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Role</option>
+
+                  <option value="CUSTOMER">Customer</option>
+                  <option value="PROVIDER">Service Provider</option>
+                </select>
+              </div>
+
+              {errors.role && (
+                <p className="error-text">{errors.role}</p>
+              )}
+            </div>
+
+            {/* Password */}
+
+            <div className="input-group">
+              <label>Password</label>
+
+              <div className="input-box">
+                <FaLock />
+
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Enter Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+              </div>
+
+              {errors.password && (
+                <p className="error-text">{errors.password}</p>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+
+            <div className="input-group">
+              <label>Confirm Password</label>
+
+              <div className="input-box">
+                <FaLock />
+
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+              </div>
+
+              {errors.confirmPassword && (
+                <p className="error-text">
+                  {errors.confirmPassword}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="register-btn"
+            >
+              Create Account
             </button>
-          </div>
 
-          <div className="register">
-            Not a new user?
-            <Link to="/"> Log In</Link>
-          </div>
-        </form>
+            <div className="register">
+              Already have an account?
+
+              <Link to="/login"> Login</Link>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -5,8 +5,10 @@ import { useDispatch } from "react-redux";
 import api from "./api/api";
 import { restoreSession } from "./redux/authSlice";
 
-import Login from "./pages/Login";
+import Login from "./pages/Login/Login";
 import Register from "./pages/Registration/Register";
+import HomePage from "./pages/Home/HomePage";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,51 +35,18 @@ function App() {
       <Routes>
         {/* Public Routes */}
 
-        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
 
         <Route path="/register" element={<Register />} />
 
-        {/* User Dashboard */}
-
-        {/* <Route
-          path="/user"
-          element={
-            <ProtectedRoute>
-              <RoleProtectedRoute allowedRole="USER">
-                <UserDashboard />
-              </RoleProtectedRoute>
-            </ProtectedRoute>
-          }
-        /> */}
-
-        {/* Service Provider Dashboard */}
-
-        {/* <Route
-          path="/provider"
-          element={
-            <ProtectedRoute>
-              <RoleProtectedRoute allowedRole="SERVICE_PROVIDER">
-                <ProviderDashboard />
-              </RoleProtectedRoute>
-            </ProtectedRoute>
-          }
-        /> */}
+        <Route path="/" element={<HomePage/>} />
 
         {/* Admin Dashboard */}
 
-        {/* <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <RoleProtectedRoute allowedRole="ADMIN">
-                <AdminDashboard />
-              </RoleProtectedRoute>
-            </ProtectedRoute>
-          }
-        /> */}
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
-export default App;
+export default App;
