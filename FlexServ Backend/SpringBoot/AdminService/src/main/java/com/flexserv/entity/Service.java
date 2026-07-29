@@ -40,7 +40,4 @@ public class Service {
 
     @Column(name = "duration")
     private Integer duration;
-
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
 }

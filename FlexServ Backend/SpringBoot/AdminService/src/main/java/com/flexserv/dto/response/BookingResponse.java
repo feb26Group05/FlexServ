@@ -40,7 +40,5 @@ public class BookingResponse {
 
     private BigDecimal totalPrice;
 
-    private Boolean isActive;
-
     private LocalDateTime createdAt;
 }

@@ -27,7 +27,5 @@ public class AdminResponse {
 
     private String department;
 
-    private Boolean isActive;
-
     private LocalDateTime createdAt;
 }
