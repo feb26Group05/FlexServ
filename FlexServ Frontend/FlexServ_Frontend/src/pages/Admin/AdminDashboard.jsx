@@ -380,9 +380,6 @@ export default function AdminDashboard() {
             </div>
             <div className="brand-info">
               <h1>FlexServ <span>ADMIN PORTAL</span></h1>
-              <p>
-                <span className="status-indicator"></span> Standalone Microservice Engine (Port 8082)
-              </p>
             </div>
           </div>
 
