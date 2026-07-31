@@ -5,13 +5,9 @@ import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.flexserv.dto.auth.AuthenticationResult;
-import com.flexserv.dto.request.AdminRegisterRequest;
-import com.flexserv.dto.request.LoginRequest;
 import com.flexserv.dto.response.AdminResponse;
 import com.flexserv.dto.response.BookingResponse;
 import com.flexserv.dto.response.CategoryResponse;
-import com.flexserv.dto.response.LoginResponse;
 import com.flexserv.dto.response.ServiceProviderResponse;
 import com.flexserv.dto.response.ServiceResponse;
 import com.flexserv.dto.response.UserResponse;
@@ -21,16 +17,13 @@ import com.flexserv.entity.Category;
 import com.flexserv.entity.Role;
 import com.flexserv.entity.ServiceProvider;
 import com.flexserv.entity.User;
-import com.flexserv.exception.InvalidCredentialsException;
 import com.flexserv.exception.ResourceNotFoundException;
-import com.flexserv.exception.UserAlreadyExistsException;
 import com.flexserv.repository.AdminRepository;
 import com.flexserv.repository.BookingRepository;
 import com.flexserv.repository.CategoryRepository;
 import com.flexserv.repository.ServiceProviderRepository;
 import com.flexserv.repository.ServiceRepository;
 import com.flexserv.repository.UserRepository;
-import com.flexserv.security.JwtService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -44,58 +37,6 @@ public class AdminServiceImpl implements AdminService {
     private final ServiceRepository serviceRepository;
     private final CategoryRepository categoryRepository;
     private final BookingRepository bookingRepository;
-
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-
-    @Override
-    public AdminResponse registerAdmin(AdminRegisterRequest request) {
-
-        if (adminRepository.existsByEmail(request.getEmail())) {
-            throw new UserAlreadyExistsException("Admin email already exists");
-        }
-
-        if (adminRepository.existsByPhone(request.getPhone())) {
-            throw new UserAlreadyExistsException("Admin phone number already exists");
-        }
-
-        Admin admin = new Admin();
-        admin.setName(request.getName());
-        admin.setEmail(request.getEmail());
-        admin.setPhone(request.getPhone());
-        admin.setPassword(passwordEncoder.encode(request.getPassword()));
-        admin.setRole(Role.ADMIN);
-        if (request.getDepartment() != null && !request.getDepartment().isBlank()) {
-            admin.setDepartment(request.getDepartment());
-        } else {
-            admin.setDepartment("System Administration");
-        }
-
-        Admin savedAdmin = adminRepository.save(admin);
-
-        return mapToResponse(savedAdmin);
-    }
-
-    @Override
-    public AuthenticationResult loginAdmin(LoginRequest request) {
-
-        Admin admin = adminRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
-
-        if (!passwordEncoder.matches(request.getPassword(), admin.getPassword())) {
-            throw new InvalidCredentialsException("Invalid email or password");
-        }
-
-        String token = jwtService.generateToken(admin);
-
-        LoginResponse loginResponse = new LoginResponse(
-                admin.getId(),
-                admin.getName(),
-                admin.getRole()
-        );
-
-        return new AuthenticationResult(token, loginResponse);
-    }
 
     // Admins
     @Override

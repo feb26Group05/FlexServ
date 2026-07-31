@@ -2,9 +2,6 @@ package com.flexserv.service;
 
 import java.util.List;
 
-import com.flexserv.dto.auth.AuthenticationResult;
-import com.flexserv.dto.request.AdminRegisterRequest;
-import com.flexserv.dto.request.LoginRequest;
 import com.flexserv.dto.response.AdminResponse;
 import com.flexserv.dto.response.BookingResponse;
 import com.flexserv.dto.response.CategoryResponse;
@@ -15,9 +12,7 @@ import com.flexserv.entity.Role;
 
 public interface AdminService {
 
-    AdminResponse registerAdmin(AdminRegisterRequest request);
-
-    AuthenticationResult loginAdmin(LoginRequest request);
+    
 
     // Admins
     AdminResponse getAdminById(Long id);
