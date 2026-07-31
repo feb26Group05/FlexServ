@@ -1,5 +1,6 @@
 package com.flexserv.security;
 
+
 import java.io.IOException;
 
 import jakarta.servlet.FilterChain;
@@ -8,7 +9,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,74 +18,153 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+
+import lombok.RequiredArgsConstructor;
+
+
+
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter 
+        extends OncePerRequestFilter {
+
+
 
     private final JwtService jwtService;
 
     private final CustomUserDetailsService userDetailsService;
 
+
+
     @Override
     protected void doFilterInternal(
+
             @NonNull HttpServletRequest request,
+
             @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain)
-            throws ServletException, IOException {
+
+            @NonNull FilterChain filterChain
+
+    )
+
+    throws ServletException, IOException {
+
+
 
         String token = null;
 
-        // Read JWT from Cookie
-        if (request.getCookies() != null) {
 
-            for (Cookie cookie : request.getCookies()) {
 
-                if ("JWT".equals(cookie.getName())) {
+        Cookie[] cookies =
+                request.getCookies();
 
-                    token = cookie.getValue();
+
+
+        if(cookies != null){
+
+
+            for(Cookie cookie : cookies){
+
+
+                if(cookie.getName()
+                        .equals("JWT")){
+
+
+                    token =
+                        cookie.getValue();
+
 
                     break;
+
                 }
+
             }
+
         }
 
-        // No JWT Cookie
-        if (token == null) {
 
-            filterChain.doFilter(request, response);
+
+        if(token == null){
+
+
+            filterChain.doFilter(
+                    request,
+                    response
+            );
 
             return;
+
         }
 
-        // Extract User ID from JWT
-        String userId = jwtService.extractUserId(token);
 
-        // Authenticate only if not already authenticated
-        if (userId != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null) {
+
+
+
+        String userId =
+                jwtService.extractUserId(token);
+
+
+
+        if(userId != null &&
+
+           SecurityContextHolder
+           .getContext()
+           .getAuthentication()
+           == null){
+
+
 
             UserDetails userDetails =
-                    userDetailsService.loadUserById(Long.parseLong(userId));
+                    userDetailsService
+                    .loadUserById(
+                        Long.parseLong(userId)
+                    );
 
-            if (jwtService.isTokenValid(token,
-                    ((CustomUserDetails) userDetails).getUser())) {
+
+
+            if(jwtService.isTokenValid(token)){
+
+
 
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities());
+
+                    new UsernamePasswordAuthenticationToken(
+
+                        userDetails,
+
+                        null,
+
+                        userDetails.getAuthorities()
+
+                    );
+
+
 
                 authentication.setDetails(
-                        new WebAuthenticationDetailsSource()
-                                .buildDetails(request));
+
+                    new WebAuthenticationDetailsSource()
+                    .buildDetails(request)
+
+                );
+
+
 
                 SecurityContextHolder
-                        .getContext()
-                        .setAuthentication(authentication);
+                .getContext()
+                .setAuthentication(authentication);
+
+
             }
+
         }
 
-        filterChain.doFilter(request, response);
+
+
+        filterChain.doFilter(
+                request,
+                response
+        );
+
     }
+
 }

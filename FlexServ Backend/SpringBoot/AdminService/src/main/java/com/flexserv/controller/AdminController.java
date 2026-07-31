@@ -2,23 +2,16 @@ package com.flexserv.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.flexserv.dto.auth.AuthenticationResult;
-import com.flexserv.dto.request.AdminRegisterRequest;
-import com.flexserv.dto.request.LoginRequest;
 import com.flexserv.dto.response.AdminResponse;
 import com.flexserv.dto.response.BookingResponse;
 import com.flexserv.dto.response.CategoryResponse;
-import com.flexserv.dto.response.LoginResponse;
 import com.flexserv.dto.response.ServiceProviderResponse;
 import com.flexserv.dto.response.ServiceResponse;
 import com.flexserv.dto.response.UserResponse;
@@ -26,9 +19,6 @@ import com.flexserv.entity.Role;
 import com.flexserv.payload.ApiResponse;
 import com.flexserv.service.AdminService;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -39,44 +29,9 @@ public class AdminController {
 
     private final AdminService adminService;
 
-    @PostMapping("/register")
-    public ResponseEntity<ApiResponse<AdminResponse>> registerAdmin(
-            @Valid @RequestBody AdminRegisterRequest request) {
+   
 
-        AdminResponse admin = adminService.registerAdmin(request);
-
-        ApiResponse<AdminResponse> apiResponse = new ApiResponse<>(
-                true,
-                "Admin Registered Successfully",
-                admin
-        );
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> loginAdmin(
-            @Valid @RequestBody LoginRequest request,
-            HttpServletResponse response) {
-
-        AuthenticationResult authResult = adminService.loginAdmin(request);
-
-        Cookie cookie = new Cookie("JWT", authResult.getToken());
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-        cookie.setMaxAge(15 * 60);
-
-        response.addCookie(cookie);
-
-        ApiResponse<LoginResponse> apiResponse = new ApiResponse<>(
-                true,
-                "Admin Login Successful",
-                authResult.getLoginResponse()
-        );
-
-        return ResponseEntity.ok(apiResponse);
-    }
+   
 
     // Admins GET Endpoints
     @GetMapping("/{id}")

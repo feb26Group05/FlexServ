@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import adminApi from "../../api/adminApi";
 import "./AdminDashboard.css";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/authSlice";
+import Cookies from "js-cookie";
 import {
   FaShieldAlt,
   FaSearch,
@@ -20,6 +23,7 @@ import {
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Active Tab: "admins" | "users" | "providers" | "services" | "categories" | "bookings"
   const [activeTab, setActiveTab] = useState("admins");
@@ -60,7 +64,7 @@ export default function AdminDashboard() {
     email: "",
     phone: "",
     password: "",
-    department: "System Administration",
+    role: "ADMIN",
   });
   const [adminRegistering, setAdminRegistering] = useState(false);
 
@@ -122,7 +126,7 @@ export default function AdminDashboard() {
       const item = res.data?.data || res.data;
       if (item) {
         setSelectedRecord(item);
-        setRecordType("USER");
+        setRecordType("USERS");
         setIsDetailModalOpen(true);
       }
     } catch (err) {
@@ -334,7 +338,7 @@ export default function AdminDashboard() {
         email: "",
         phone: "",
         password: "",
-        department: "System Administration",
+        role: "ADMIN",
       });
       fetchAllAdmins();
     } catch (err) {
@@ -351,9 +355,8 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("user");
+    Cookies.remove("JWT");
+    dispatch(logout());
     navigate("/login");
   };
 
@@ -487,8 +490,8 @@ export default function AdminDashboard() {
                   className="select-styled"
                 >
                   <option value="ALL">Filter Role: ALL</option>
-                  <option value="USER">USER</option>
-                  <option value="SERVICE_PROVIDER">SERVICE_PROVIDER</option>
+                  <option value="CUSTOMER">CUSTOMERS</option>
+                  <option value="PROVIDER">SERVICE_PROVIDER</option>
                   <option value="ADMIN">ADMIN</option>
                 </select>
               )}
@@ -504,7 +507,7 @@ export default function AdminDashboard() {
                   style={{ width: "130px" }}
                 />
                 <button type="submit" className="btn-lookup">
-                  <FaFilter /> GET ID
+                  <FaFilter /> Data From Id
                 </button>
               </form>
 
@@ -555,7 +558,7 @@ export default function AdminDashboard() {
                       </td>
                       <td>
                         <button className="btn-action-icon" onClick={() => openViewModal(item, "ADMIN")}>
-                          <FaEye /> View GET
+                          <FaEye /> View Details
                         </button>
                       </td>
                     </tr>
@@ -579,7 +582,7 @@ export default function AdminDashboard() {
                       </td>
                       <td>
                         <button className="btn-action-icon" onClick={() => openViewModal(item, "USER")}>
-                          <FaEye /> View GET
+                          <FaEye /> View Details
                         </button>
                       </td>
                     </tr>
@@ -603,7 +606,7 @@ export default function AdminDashboard() {
                       </td>
                       <td>
                         <button className="btn-action-icon" onClick={() => openViewModal(item, "PROVIDER")}>
-                          <FaEye /> View GET
+                          <FaEye /> View Details
                         </button>
                       </td>
                     </tr>
@@ -624,7 +627,7 @@ export default function AdminDashboard() {
                       </td>
                       <td>
                         <button className="btn-action-icon" onClick={() => openViewModal(item, "SERVICE")}>
-                          <FaEye /> View GET
+                          <FaEye /> View Details
                         </button>
                       </td>
                     </tr>
@@ -642,7 +645,7 @@ export default function AdminDashboard() {
                       <td><span className="badge-role-tag admin">CATEGORY</span></td>
                       <td>
                         <button className="btn-action-icon" onClick={() => openViewModal(item, "CATEGORY")}>
-                          <FaEye /> View GET
+                          <FaEye /> View Details
                         </button>
                       </td>
                     </tr>
@@ -663,7 +666,7 @@ export default function AdminDashboard() {
                       </td>
                       <td>
                         <button className="btn-action-icon" onClick={() => openViewModal(item, "BOOKING")}>
-                          <FaEye /> View GET
+                          <FaEye /> View Details
                         </button>
                       </td>
                     </tr>
@@ -680,7 +683,7 @@ export default function AdminDashboard() {
         <div className="modal-overlay" onClick={() => setIsDetailModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header-bar">
-              <h3>{recordType} GET Detail View</h3>
+              <h3>{recordType}View Details</h3>
               <button className="btn-close" onClick={() => setIsDetailModalOpen(false)}>
                 <FaTimes />
               </button>
@@ -797,7 +800,7 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <div className="form-field-group">
+              {/* <div className="form-field-group">
                 <label>Department</label>
                 <input
                   type="text"
@@ -806,7 +809,7 @@ export default function AdminDashboard() {
                   onChange={(e) => setAdminForm({ ...adminForm, department: e.target.value })}
                   className="input-styled"
                 />
-              </div>
+              </div> */}
 
               <div className="form-field-group">
                 <label>Password *</label>
