@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.flexserv.dto.request.UpdateServiceProviderRequestDto;
 
 import java.util.List;
 import java.util.Set;
@@ -26,14 +27,22 @@ public class ServiceProviderController {
     }
 
 
-    // @PostMapping
-    // public ResponseEntity<ServiceProviderResponseDto> createProvider(@RequestBody ServiceProviderRequestDto requestDto) {
-    //     return new ResponseEntity<>(providerService.createProvider(requestDto), HttpStatus.CREATED);
-    // }
+    @PostMapping
+    public ResponseEntity<ServiceProviderResponseDto> createProvider(@RequestBody ServiceProviderRequestDto requestDto) {
+        return new ResponseEntity<>(providerService.createProvider(requestDto), HttpStatus.CREATED);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ServiceProviderResponseDto> getProviderById(@PathVariable Long id) {
         return ResponseEntity.ok(providerService.getProviderById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ServiceProviderResponseDto> updateProvider(
+            @PathVariable Long id,
+            @RequestBody UpdateServiceProviderRequestDto requestDto) {
+
+        return ResponseEntity.ok(providerService.updateProvider(id, requestDto));
     }
 
     @GetMapping("/user/{userId}")

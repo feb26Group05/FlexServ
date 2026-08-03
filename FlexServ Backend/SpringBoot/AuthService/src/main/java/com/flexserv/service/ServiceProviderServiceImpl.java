@@ -12,6 +12,7 @@ import com.flexserv.service.ServiceProviderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.flexserv.dto.request.UpdateServiceProviderRequestDto;
 
 import com.flexserv.exception.ResourceNotFoundException;
 
@@ -89,6 +90,26 @@ public class ServiceProviderServiceImpl implements ServiceProviderService {
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public ServiceProviderResponseDto updateProvider(
+            Long providerId,
+            UpdateServiceProviderRequestDto requestDto) {
+
+        ServiceProviderCompany provider = providerRepository.findById(providerId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Provider not found with id: " + providerId));
+
+        provider.setCompanyName(requestDto.getCompanyName());
+        provider.setExperienceYears(requestDto.getExperienceYears());
+        provider.setBio(requestDto.getBio());
+
+        ServiceProviderCompany updatedProvider = providerRepository.save(provider);
+
+        return mapToDto(updatedProvider);
     }
 
     @Override
