@@ -1,8 +1,9 @@
 package com.flexserv.repository;
 
+import com.flexserv.entity.ServiceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import com.flexserv.entity.Service;
-
-public interface ServiceRepository extends JpaRepository<Service, Long> {
+@Repository
+public interface ServiceRepository extends JpaRepository<ServiceEntity, Long> {
 }
