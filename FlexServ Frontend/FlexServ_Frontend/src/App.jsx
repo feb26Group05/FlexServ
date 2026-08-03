@@ -9,6 +9,7 @@ import Login from "./pages/Login/Login";
 import Register from "./pages/Registration/Register";
 import HomePage from "./pages/Home/HomePage";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const dispatch = useDispatch();
@@ -34,19 +35,22 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Public Routes */}
-
         <Route path="/login" element={<Login />} />
-
         <Route path="/register" element={<Register />} />
+        <Route path="/" element={<HomePage />} />
 
-        <Route path="/" element={<HomePage/>} />
-
-        {/* Admin Dashboard */}
-
-        <Route path="/admin" element={<AdminDashboard />} />
+        {/* Protected Admin Dashboard */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRole="ADMIN">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
 }
 
-export default App;
+export default App;

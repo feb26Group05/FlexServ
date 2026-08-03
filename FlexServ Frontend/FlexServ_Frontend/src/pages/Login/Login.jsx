@@ -93,7 +93,6 @@ export default function Login() {
                 <div className="left-section">
                     <div className="logo">
                         <h1>FlexServ</h1>
-                        <span>BOOKING SYSTEM</span>
                     </div>
 
                     <div className="hero-content">
@@ -191,9 +190,7 @@ export default function Login() {
                         )}
                     </div>
 
-                    <a href="/" className="forgot">
-                        Forgot Password?
-                    </a>
+                  
 
                     <button
                         className="login-btn"
