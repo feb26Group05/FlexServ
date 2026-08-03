@@ -2,6 +2,7 @@ package com.flexserv.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.flexserv.entity.Category;
 
 @Getter
 @Setter

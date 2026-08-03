@@ -1,0 +1,82 @@
+.provider-dashboard {
+    display: flex;
+    min-height: 100vh;
+    background: #f4f6f9;
+}
+
+.dashboard-content {
+    flex: 1;
+    padding: 30px;
+}
+
+.welcome-card{
+    background:#fff;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    margin-bottom:25px;
+}
+
+.welcome-card h2{
+    margin-bottom:10px;
+}
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+    margin-bottom:30px;
+}
+
+.stat-card{
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+.stat-card h3{
+    font-size:15px;
+    color:#666;
+    margin-bottom:15px;
+}
+
+.stat-card span{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.quick-actions{
+    background:#fff;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+    margin-bottom:30px;
+}
+
+.action-grid{
+    display:flex;
+    gap:20px;
+    margin-top:20px;
+}
+
+.action-grid button{
+    padding:14px 28px;
+    border:none;
+    background:#2563eb;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.action-grid button:hover{
+    background:#1d4ed8;
+}
+
+.recent-card{
+    background:#fff;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
