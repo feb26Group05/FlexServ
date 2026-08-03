@@ -351,3 +351,54 @@ body {
     font-size: 30px;
   }
 }
+
+.account-type-tabs {
+    display: flex;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+    border-color: #1890ff;
+}
+
+.tab-btn.active {
+    background: #1890ff;
+    color: white;
+    border-color: #1890ff;
+}
+
+.textarea-box {
+    padding: 0;
+    min-height: 120px;
+    align-items: stretch;
+}
+
+.textarea-box textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px 18px;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: vertical;
+    color: #fff;
+    font-size: 16px;
+    font-family: inherit;
+}
+
+.textarea-box textarea::placeholder {
+    color: #8a8a8a;
+}

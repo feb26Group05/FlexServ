@@ -10,6 +10,7 @@ import Register from "./pages/Registration/Register";
 import HomePage from "./pages/Home/HomePage";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ProviderDashboard from "./pages/Provider/ProviderDashboard";
 
 function App() {
   const dispatch = useDispatch();
@@ -46,6 +47,14 @@ function App() {
             <ProtectedRoute allowedRole="ADMIN">
               <AdminDashboard />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/provider"
+          element={
+              <ProtectedRoute allowedRole="PROVIDER">
+                  <ProviderDashboard />
+              </ProtectedRoute>
           }
         />
       </Routes>
