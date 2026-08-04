@@ -51,6 +51,16 @@
 
 
 
+.navbar-logo a{
+
+    text-decoration:none;
+
+    color:inherit;
+
+}
+
+
+
 .nav-links{
 
     display:flex;
@@ -58,6 +68,26 @@
     gap:40px;
 
     list-style:none;
+
+}
+
+
+
+.nav-links li a{
+
+    text-decoration:none;
+
+    color:#ddd;
+
+    transition:.3s;
+
+}
+
+
+
+.nav-links li a:hover{
+
+    color:#ff6b00;
 
 }
 
