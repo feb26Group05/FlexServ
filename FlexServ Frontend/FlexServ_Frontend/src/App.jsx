@@ -11,6 +11,7 @@ import HomePage from "./pages/Home/HomePage";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import UserProfile from "./pages/User/UserProfile"; // Profile component
 import ProtectedRoute from "./components/ProtectedRoute";
+import ProviderDashboard from "./pages/Provider/ProviderDashboard";
 
 function App() {
   const dispatch = useDispatch();
@@ -65,6 +66,14 @@ function App() {
 
         {/* Catch-all redirect to Home */}
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route
+          path="/provider"
+          element={
+              <ProtectedRoute allowedRole="PROVIDER">
+                  <ProviderDashboard />
+              </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

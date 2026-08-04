@@ -44,6 +44,10 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/api/admin/**"
                         ).permitAll()
+                         .requestMatchers(HttpMethod.GET, "/api/providers/**").permitAll()
+                         .requestMatchers(HttpMethod.POST, "/api/providers/**").permitAll()
+                         .requestMatchers(HttpMethod.PUT, "/api/providers/**").permitAll()
+
 
                         .anyRequest().authenticated())
 
