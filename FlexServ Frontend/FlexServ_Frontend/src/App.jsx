@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
@@ -9,6 +9,7 @@ import Login from "./pages/Login/Login";
 import Register from "./pages/Registration/Register";
 import HomePage from "./pages/Home/HomePage";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import UserProfile from "./pages/User/UserProfile"; // Profile component
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -17,7 +18,6 @@ function App() {
   useEffect(() => {
     const loadUser = async () => {
       const token = localStorage.getItem("token");
-
       if (!token) return;
 
       try {
@@ -37,7 +37,21 @@ function App() {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        
+        {/* Landing/Home Page */}
         <Route path="/" element={<HomePage />} />
+
+        {/* Protected User Routes */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+        {/* Alias /user route to avoid 404s */}
+        <Route path="/user" element={<Navigate to="/profile" replace />} />
 
         {/* Protected Admin Dashboard */}
         <Route
@@ -48,6 +62,9 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Catch-all redirect to Home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

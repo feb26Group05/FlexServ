@@ -1,0 +1,308 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Page Outer Container Matching HomePage */
+.user-profile-container {
+  min-height: 100vh;
+  padding-top: 120px; /* Space for Navbar */
+  padding-bottom: 60px;
+  padding-left: 20px;
+  padding-right: 20px;
+  background-image: linear-gradient(
+      rgba(0, 0, 0, 0.55),
+      rgba(0, 0, 0, 0.65)
+    ),
+    url("https://images.unsplash.com/photo-1505693416388-ac5ce068fe85");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: white;
+}
+
+.profile-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Glass Panels matching Category Cards on Home Page */
+.profile-glass-card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Header Row in Cards */
+.profile-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 12px;
+}
+
+.profile-user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-avatar-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #ff6b00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  font-size: 22px;
+  box-shadow: 0 8px 20px rgba(255, 107, 0, 0.4);
+}
+
+.profile-title-text h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.profile-title-text p {
+  font-size: 14px;
+  color: #e0e0e0;
+  margin: 2px 0 0 0;
+}
+
+/* Detail Rows */
+.profile-rows-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-data-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 16px 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-data-row label {
+  font-size: 14px;
+  color: #c5c5c5;
+  font-weight: 500;
+}
+
+.profile-data-row span {
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+}
+
+/* Home-styled Buttons */
+.home-btn-orange {
+  background: #ff6b00;
+  color: white;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 30px; /* Matching orange pill buttons on Home Page */
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 18px rgba(255, 107, 0, 0.35);
+}
+
+.home-btn-orange:hover {
+  background: #ff7f21;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(255, 107, 0, 0.5);
+}
+
+.home-btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 18px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.home-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.home-btn-danger {
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: #ff4d4f;
+  padding: 8px 18px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all 0.25s ease;
+}
+
+.home-btn-danger:hover {
+  background: #ff4d4f;
+  color: white;
+}
+
+/* Table Design */
+.profile-table-wrapper {
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.profile-custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.profile-custom-table th {
+  background: rgba(0, 0, 0, 0.4);
+  color: #d1d5db;
+  padding: 16px 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-custom-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 14px;
+  color: white;
+}
+
+.profile-custom-table tbody tr:hover {
+  background: rgba(255, 107, 0, 0.08);
+}
+
+/* Fixed Scrollable Modal Overlay */
+.home-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.home-modal-box {
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 24px;
+  padding: 32px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh; /* Fixes truncation */
+  overflow-y: auto;  /* Allows inner scrolling */
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.home-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 14px;
+}
+
+.home-modal-header h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.home-modal-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.home-modal-close:hover {
+  background: #ff4d4f;
+}
+
+/* Forms & Input Fields */
+.home-form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.home-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.home-input-group label {
+  font-size: 13px;
+  color: #d1d5db;
+  font-weight: 500;
+}
+
+.home-input-field {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: #ffffff !important;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.home-input-field:focus {
+  border-color: #ff6b00 !important;
+  box-shadow: 0 0 12px rgba(255, 107, 0, 0.35);
+}
+
+.home-form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}

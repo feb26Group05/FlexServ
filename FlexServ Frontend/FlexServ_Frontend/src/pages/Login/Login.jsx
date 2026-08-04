@@ -69,7 +69,7 @@ export default function Login() {
             const role = res.data.data.role;
 
             if (role === "CUSTOMER") {
-                navigate("/user");
+                navigate("/");
             } else if (role === "PROVIDER") {
                 navigate("/provider");
             } else if (role === "ADMIN") {
