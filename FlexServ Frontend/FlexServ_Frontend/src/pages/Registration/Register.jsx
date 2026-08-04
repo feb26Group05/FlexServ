@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa";
 
 function Register() {
+  const [accountType, setAccountType] = useState("CUSTOMER");
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -20,7 +21,11 @@ function Register() {
     phone: "",
     password: "",
     confirmPassword: "",
-    role: "",
+
+    companyName: "",
+    experienceYears: "",
+    bio: "",
+    serviceIds: [],
   });
 
   const [errors, setErrors] = useState({});
@@ -48,10 +53,6 @@ function Register() {
       newErrors.phone = "Phone number is required";
     } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
       newErrors.phone = "Enter a valid 10-digit mobile number";
-    }
-
-    if (!formData.role) {
-      newErrors.role = "Please select a role";
     }
 
     if (!formData.password) {
@@ -95,13 +96,13 @@ function Register() {
       email: formData.email,
       phone: formData.phone,
       password: formData.password,
-      role: formData.role,
+      role: accountType,
     };
 
     try {
       const response = await axios.post(
         "http://localhost:8081/api/auth/register",
-        requestData
+        requestData,
       );
 
       alert(response.data.message || "Registration Successful");
@@ -133,7 +134,6 @@ function Register() {
         <div className="left-section">
           <div className="logo">
             <h1>FlexServ</h1>
-           
           </div>
 
           <div className="hero-content">
@@ -173,6 +173,34 @@ function Register() {
         <div className="register-card">
           <h1>Create Account</h1>
           <p>Register to continue</p>
+
+          {/* Account Type */}
+
+          <div className="input-group">
+            <label>Register As</label>
+
+            <div className="account-type-tabs">
+              <button
+                type="button"
+                className={
+                  accountType === "CUSTOMER" ? "tab-btn active" : "tab-btn"
+                }
+                onClick={() => setAccountType("CUSTOMER")}
+              >
+                Customer
+              </button>
+
+              <button
+                type="button"
+                className={
+                  accountType === "PROVIDER" ? "tab-btn active" : "tab-btn"
+                }
+                onClick={() => setAccountType("PROVIDER")}
+              >
+                Service Provider
+              </button>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit}>
             {/* Name Row */}
@@ -236,9 +264,7 @@ function Register() {
                 />
               </div>
 
-              {errors.email && (
-                <p className="error-text">{errors.email}</p>
-              )}
+              {errors.email && <p className="error-text">{errors.email}</p>}
             </div>
 
             {/* Phone */}
@@ -258,36 +284,61 @@ function Register() {
                 />
               </div>
 
-              {errors.phone && (
-                <p className="error-text">{errors.phone}</p>
-              )}
+              {errors.phone && <p className="error-text">{errors.phone}</p>}
             </div>
 
-            {/* Role */}
+            {accountType === "PROVIDER" && (
+              <>
+                {/* Company Name */}
 
-            <div className="input-group">
-              <label>Role</label>
+                <div className="input-group">
+                  <label>Company Name</label>
 
-              <div className="input-box">
-                <FaUserTag />
+                  <div className="input-box">
+                    <FaUser />
 
-                <select
-                  name="role"
-                  className="custom-select"
-                  value={formData.role}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Role</option>
+                    <input
+                      type="text"
+                      name="companyName"
+                      placeholder="Company Name"
+                      value={formData.companyName || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
 
-                  <option value="CUSTOMER">Customer</option>
-                  <option value="PROVIDER">Service Provider</option>
-                </select>
-              </div>
+                {/* Experience */}
 
-              {errors.role && (
-                <p className="error-text">{errors.role}</p>
-              )}
-            </div>
+                <div className="input-group">
+                  <label>Experience (Years)</label>
+
+                  <div className="input-box">
+                    <input
+                      type="number"
+                      name="experienceYears"
+                      placeholder="Years of Experience"
+                      value={formData.experienceYears || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
+                {/* Bio */}
+
+                <div className="input-group">
+                  <label>Bio</label>
+
+                  <div className="input-box textarea-box">
+                    <textarea
+                      name="bio"
+                      placeholder="Tell customers about your services"
+                      value={formData.bio}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Password */}
 
@@ -329,22 +380,16 @@ function Register() {
               </div>
 
               {errors.confirmPassword && (
-                <p className="error-text">
-                  {errors.confirmPassword}
-                </p>
+                <p className="error-text">{errors.confirmPassword}</p>
               )}
             </div>
 
-            <button
-              type="submit"
-              className="register-btn"
-            >
+            <button type="submit" className="register-btn">
               Create Account
             </button>
 
             <div className="register">
               Already have an account?
-
               <Link to="/login"> Login</Link>
             </div>
           </form>

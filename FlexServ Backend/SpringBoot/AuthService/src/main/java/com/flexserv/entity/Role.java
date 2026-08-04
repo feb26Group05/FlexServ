@@ -1,10 +1,12 @@
 package com.flexserv.entity;
 
 public enum Role {
-	
+    USER,
+    ADMIN,
+    PROVIDER,
 	CUSTOMER,
-
-	PROVIDER,
-
-	ADMIN
+    provider, // Added to handle lowercase database entries
+    user,
+    admin,
+	customer
 }
