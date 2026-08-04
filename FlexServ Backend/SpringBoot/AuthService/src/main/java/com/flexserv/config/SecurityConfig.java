@@ -30,50 +30,60 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-		http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        http
 
-				.csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable())
 
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS))
 
-				.authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(auth -> auth
 
-						.requestMatchers("/api/auth/**").permitAll().requestMatchers(HttpMethod.OPTIONS, "/**")
-						.permitAll()
+                        .requestMatchers(
+                                "/api/auth/**",
+                                "/api/admin/**"
+                        ).permitAll()
+                         .requestMatchers(HttpMethod.GET, "/api/providers/**").permitAll()
+                         .requestMatchers(HttpMethod.POST, "/api/providers/**").permitAll()
+                         .requestMatchers(HttpMethod.PUT, "/api/providers/**").permitAll()
 
-						.anyRequest().authenticated())
+
+                        .anyRequest().authenticated())
 
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
 
-	@Bean
-	PasswordEncoder passwordEncoder() {
+    @Bean
+    PasswordEncoder passwordEncoder() {
 
-		return new BCryptPasswordEncoder();
-	}
+        return new BCryptPasswordEncoder();
+    }
 
-	@Bean
-	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    @Bean
+    AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config)
+            throws Exception {
 
-		return config.getAuthenticationManager();
-	}
+        return config.getAuthenticationManager();
+    }
+    
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
 
-	@Bean
-	CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-
-		configuration.setAllowedOrigins(List.of("http://localhost:5173"));
-		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-		configuration.setAllowedHeaders(List.of("*"));
-		configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
 		source.registerCorsConfiguration("/**", configuration);
 
-		return source;
-	}
+        return source;
+    }
 
 }
