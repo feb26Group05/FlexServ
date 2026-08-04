@@ -8,6 +8,7 @@ import { restoreSession } from "./redux/authSlice";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Registration/Register";
 import HomePage from "./pages/Home/HomePage";
+import ServicesPage from "./pages/Services/ServicesPage";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -38,6 +39,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<HomePage />} />
+        <Route path="/services" element={<ServicesPage />} />
 
         {/* Protected Admin Dashboard */}
         <Route

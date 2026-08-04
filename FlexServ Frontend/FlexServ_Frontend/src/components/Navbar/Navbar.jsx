@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./Navbar.css";
 
 
@@ -11,7 +12,7 @@ export default function Navbar(){
             <div className="navbar-logo">
 
                 <h1>
-                    FlexServ
+                    <Link to="/">FlexServ</Link>
                 </h1>
 
             </div>
@@ -21,19 +22,19 @@ export default function Navbar(){
             <ul className="nav-links">
 
                 <li>
-                    Home
+                    <Link to="/">Home</Link>
                 </li>
 
                 <li>
-                    Services
+                    <Link to="/services">Services</Link>
                 </li>
 
                 <li>
-                    Providers
+                    <Link to="/">Providers</Link>
                 </li>
 
                 <li>
-                    About
+                    <Link to="/">About</Link>
                 </li>
 
             </ul>
@@ -42,23 +43,13 @@ export default function Navbar(){
 
             <div className="nav-buttons">
 
-
-                {/* <button className="partner-btn">
-
-                    Become Partner
-
-                </button> */}
-
-
-              <a href="/login"> <button className="nav-login-btn">
-
+              <Link to="/login">
+                <button className="nav-login-btn">
                     Login
-
-                </button></a> 
-
+                </button>
+              </Link> 
 
             </div>
-
 
         </nav>
 
