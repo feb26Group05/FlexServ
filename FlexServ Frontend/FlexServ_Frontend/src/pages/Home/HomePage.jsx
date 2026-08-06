@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../components/Hero/Hero";
 import CategoryGrid from "../../components/Categories/CategoryGrid";
@@ -7,35 +8,70 @@ import Professionals from "../../components/Professionals/Professionals";
 import HowItWorks from "../../components/HowItWorks/HowItWorks";
 import Testimonials from "../../components/Testimonials/Testimonials";
 import Footer from "../../components/Footer/Footer";
-
+import BookingModal from "../../components/Booking/BookingModal";
 import "./HomePage.css";
 
+export default function HomePage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [activeBookingService, setActiveBookingService] = useState(null);
 
-export default function HomePage(){
+  const handleCategorySelect = (categoryTitle) => {
+    if (selectedCategory === categoryTitle) {
+      setSelectedCategory("All");
+    } else {
+      setSelectedCategory(categoryTitle);
+    }
+    const el = document.getElementById("services-section");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
 
-    return(
+  const handleTagClick = (tag) => {
+    setSearchQuery(tag);
+    const el = document.getElementById("services-section");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
 
-        <div className="home-container">
+  return (
+    <div className="home-container">
+      <Navbar />
 
-            <Navbar />
+      <Hero
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onTagClick={handleTagClick}
+      />
 
-            <Hero />
+      <CategoryGrid
+        selectedCategory={selectedCategory}
+        onSelectCategory={handleCategorySelect}
+      />
 
-            <CategoryGrid />
+      <PopularServices
+        searchQuery={searchQuery}
+        selectedCategory={selectedCategory}
+        onBookService={(service) => setActiveBookingService(service)}
+      />
 
-            <PopularServices />
+      <WhyChoose />
 
-            <WhyChoose />
+      <Professionals />
 
-            <Professionals />
+      <HowItWorks />
 
-            <HowItWorks />
+      <Testimonials />
 
-            <Testimonials />
+      <Footer />
 
-            <Footer />
-
-        </div>
-
-    );
+      {activeBookingService && (
+        <BookingModal
+          service={activeBookingService}
+          onClose={() => setActiveBookingService(null)}
+          onBookingSuccess={() => {
+            console.log("Booking created successfully!");
+          }}
+        />
+      )}
+    </div>
+  );
 }
