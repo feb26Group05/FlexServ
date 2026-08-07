@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import UserProfile from "./pages/User/UserProfile"; // Profile component
 import ProtectedRoute from "./components/ProtectedRoute";
 import ProviderDashboard from "./pages/Provider/ProviderDashboard";
+import ChatWidget from "./components/ChatWidget/ChatWidget"; // <-- IMPORT CHATBOT WIDGET
 
 function App() {
   const dispatch = useDispatch();
@@ -35,6 +36,8 @@ function App() {
 
   return (
     <BrowserRouter>
+    {/* Global AI Chatbot Widget (Appears on every page) */}
+      <ChatWidget />
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../redux/authSlice";
 import "./Navbar.css";
 
 export default function Navbar() {
@@ -12,7 +13,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    // dispatch(logout()); // Dispatch redux logout if available
+    dispatch(logout()); // Properly clear Redux user session on logout
     navigate("/login");
   };
 
