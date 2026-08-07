@@ -2,6 +2,8 @@ package com.flexserv.service;
 
 import java.util.List;
 
+import com.flexserv.dto.request.AdminRegisterRequest;
+import com.flexserv.dto.request.UpdateProviderRequest;
 import com.flexserv.dto.response.AdminResponse;
 import com.flexserv.dto.response.BookingResponse;
 import com.flexserv.dto.response.CategoryResponse;
@@ -15,6 +17,7 @@ public interface AdminService {
     
 
     // Admins
+    AdminResponse registerAdmin(AdminRegisterRequest request);
     AdminResponse getAdminById(Long id);
     List<AdminResponse> getAllAdmins();
 
@@ -26,7 +29,11 @@ public interface AdminService {
     // Service Providers
     List<ServiceProviderResponse> getAllProviders();
     ServiceProviderResponse getProviderById(Long id);
+    ServiceProviderResponse getProviderByUserId(Long userId);
+    ServiceProviderResponse updateProviderAvailability(Long providerId, Boolean available);
+    ServiceProviderResponse updateProviderProfile(Long providerId, UpdateProviderRequest request);
 
+    
     // Services
     List<ServiceResponse> getAllServices();
     ServiceResponse getServiceById(Long id);
