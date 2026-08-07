@@ -84,7 +84,8 @@ public class SecurityConfig {
 
 
             .requestMatchers(
-                "/api/public/**"
+                "/api/public/**",
+                "/api/chat/**"
             )
             .permitAll()
 
