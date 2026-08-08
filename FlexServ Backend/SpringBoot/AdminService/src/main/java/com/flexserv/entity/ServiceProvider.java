@@ -1,13 +1,18 @@
 package com.flexserv.entity;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -46,4 +51,12 @@ public class ServiceProvider {
 
     @Column(name = "company_available")
     private Boolean companyAvailable;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "provider_services",
+        joinColumns = @JoinColumn(name = "provider_id"),
+        inverseJoinColumns = @JoinColumn(name = "service_id")
+    )
+    private Set<Service> services = new HashSet<>();
 }

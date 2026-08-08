@@ -1,6 +1,7 @@
 package com.flexserv.dto.response;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,4 +35,8 @@ public class ServiceProviderResponse {
     private BigDecimal rating;
 
     private Boolean companyAvailable;
+
+    private List<Long> serviceIds;
+
+    private List<String> serviceNames;
 }

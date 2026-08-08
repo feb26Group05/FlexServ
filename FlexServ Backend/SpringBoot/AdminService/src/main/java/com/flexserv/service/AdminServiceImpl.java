@@ -1,10 +1,14 @@
 package com.flexserv.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.flexserv.dto.request.AdminRegisterRequest;
+import com.flexserv.dto.request.UpdateProviderRequest;
 import com.flexserv.dto.response.AdminResponse;
 import com.flexserv.dto.response.BookingResponse;
 import com.flexserv.dto.response.CategoryResponse;
@@ -18,6 +22,7 @@ import com.flexserv.entity.Role;
 import com.flexserv.entity.ServiceProvider;
 import com.flexserv.entity.User;
 import com.flexserv.exception.ResourceNotFoundException;
+import com.flexserv.exception.UserAlreadyExistsException;
 import com.flexserv.repository.AdminRepository;
 import com.flexserv.repository.BookingRepository;
 import com.flexserv.repository.CategoryRepository;
@@ -37,7 +42,42 @@ public class AdminServiceImpl implements AdminService {
     private final ServiceRepository serviceRepository;
     private final CategoryRepository categoryRepository;
     private final BookingRepository bookingRepository;
+    private final PasswordEncoder passwordEncoder;
 
+
+    // Register Admin
+    @Override
+    @Transactional
+    public AdminResponse registerAdmin(AdminRegisterRequest request) {
+        if (adminRepository.existsByEmail(request.getEmail()) || userRepository.existsByEmail(request.getEmail())) {
+            throw new UserAlreadyExistsException("Email already registered");
+        }
+
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+        Admin admin = new Admin();
+        admin.setName(request.getName());
+        admin.setEmail(request.getEmail());
+        admin.setPhone(request.getPhone());
+        admin.setPassword(encodedPassword);
+        admin.setRole(Role.ADMIN);
+        admin.setDepartment(request.getDepartment() != null && !request.getDepartment().isBlank() 
+            ? request.getDepartment() : "System Administration");
+
+        Admin savedAdmin = adminRepository.save(admin);
+
+        // Synchronize with User entity so admin can also authenticate via AuthService login
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPhone(request.getPhone());
+        user.setPassword(encodedPassword);
+        user.setRole(Role.ADMIN);
+        userRepository.save(user);
+
+        return mapToResponse(savedAdmin);
+    }
+    
     // Admins
     @Override
     public AdminResponse getAdminById(Long id) {
@@ -96,6 +136,64 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() -> new ResourceNotFoundException("Service Provider not found with ID: " + id));
 
         return mapProviderToResponse(provider);
+    }
+    
+    @Override
+    public ServiceProviderResponse getProviderByUserId(Long userId) {
+        ServiceProvider provider = serviceProviderRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Service Provider profile not found for User ID: " + userId));
+
+        return mapProviderToResponse(provider);
+    }
+
+    @Override
+    @Transactional
+    public ServiceProviderResponse updateProviderAvailability(Long providerId, Boolean available) {
+        ServiceProvider provider = serviceProviderRepository.findById(providerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Service Provider not found with ID: " + providerId));
+
+        provider.setCompanyAvailable(available);
+        ServiceProvider updated = serviceProviderRepository.save(provider);
+        return mapProviderToResponse(updated);
+    }
+    
+    @Override
+    @Transactional
+    public ServiceProviderResponse updateProviderProfile(Long providerId, UpdateProviderRequest request) {
+        ServiceProvider provider = serviceProviderRepository.findById(providerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Service Provider not found with ID: " + providerId));
+
+        User user = provider.getUser();
+        if (user != null) {
+            if (request.getUserName() != null && !request.getUserName().isBlank()) {
+                user.setName(request.getUserName().trim());
+            }
+            if (request.getUserPhone() != null && !request.getUserPhone().isBlank()) {
+                user.setPhone(request.getUserPhone().trim());
+            }
+            // Email is explicitly NOT updated as per requirements
+            userRepository.save(user);
+        }
+
+        if (request.getCompanyName() != null && !request.getCompanyName().isBlank()) {
+            provider.setCompanyName(request.getCompanyName().trim());
+        }
+        if (request.getExperienceYears() != null) {
+            provider.setExperienceYears(request.getExperienceYears());
+        }
+        if (request.getBio() != null) {
+            provider.setBio(request.getBio().trim());
+        }
+
+        if (request.getServiceIds() != null) {
+            Set<com.flexserv.entity.Service> updatedServices = new java.util.HashSet<>(
+                serviceRepository.findAllById(request.getServiceIds())
+            );
+            provider.setServices(updatedServices);
+        }
+
+        ServiceProvider updated = serviceProviderRepository.save(provider);
+        return mapProviderToResponse(updated);
     }
 
     // Services
@@ -175,6 +273,13 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private ServiceProviderResponse mapProviderToResponse(ServiceProvider provider) {
+        List<Long> serviceIds = provider.getServices() != null
+                ? provider.getServices().stream().map(com.flexserv.entity.Service::getId).toList()
+                : List.of();
+        List<String> serviceNames = provider.getServices() != null
+                ? provider.getServices().stream().map(com.flexserv.entity.Service::getName).toList()
+                : List.of();
+
         return new ServiceProviderResponse(
                 provider.getId(),
                 provider.getUser() != null ? provider.getUser().getId() : null,
@@ -186,7 +291,9 @@ public class AdminServiceImpl implements AdminService {
                 provider.getBio(),
                 provider.getIsVerified(),
                 provider.getRating(),
-                provider.getCompanyAvailable()
+                provider.getCompanyAvailable(),
+                serviceIds,
+                serviceNames
         );
     }
 
@@ -227,4 +334,6 @@ public class AdminServiceImpl implements AdminService {
                 booking.getCreatedAt()
         );
     }
+
+	
 }
