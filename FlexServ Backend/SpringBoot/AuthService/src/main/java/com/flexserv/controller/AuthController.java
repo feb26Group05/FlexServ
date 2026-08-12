@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class AuthController {
 
     private final AuthService authService;
@@ -59,7 +59,7 @@ public class AuthController {
         Cookie cookie = new Cookie("JWT", authResult.getToken());
 
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);          // true in production (HTTPS)
+        cookie.setSecure(false);          
         cookie.setPath("/");
         cookie.setMaxAge(15 * 60);
 
@@ -74,7 +74,24 @@ public class AuthController {
 
         return ResponseEntity.ok(apiResponse);
     }
-    
 
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logoutUser(HttpServletResponse response) {
+        Cookie cookie = new Cookie("JWT", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+
+        response.addCookie(cookie);
+
+        ApiResponse<String> apiResponse = new ApiResponse<>(
+                true,
+                "Logout Successful",
+                "Logged out successfully"
+        );
+
+        return ResponseEntity.ok(apiResponse);
+    }
 
 }
