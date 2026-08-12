@@ -29,11 +29,17 @@
 
 
 
+.navbar-logo {
+    cursor: pointer;
+}
+
 .navbar-logo h1{
 
     font-size:38px;
 
     line-height:1;
+
+    color: #ffffff;
 
 }
 
@@ -51,16 +57,6 @@
 
 
 
-.navbar-logo a{
-
-    text-decoration:none;
-
-    color:inherit;
-
-}
-
-
-
 .nav-links{
 
     display:flex;
@@ -69,46 +65,30 @@
 
     list-style:none;
 
-}
+    margin: 0;
 
-
-
-.nav-links li a{
-
-    text-decoration:none;
-
-    color:#ddd;
-
-    transition:.3s;
+    padding: 0;
 
 }
 
 
 
-.nav-links li a:hover{
-
-    color:#ff6b00;
-
+.nav-item {
+    cursor: pointer;
+    color: #e0e0e0;
+    font-weight: 500;
+    font-size: 15px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    transition: all 0.25s ease;
+    user-select: none;
 }
 
 
 
-.nav-links li{
-
-    cursor:pointer;
-
-    color:#ddd;
-
-    transition:.3s;
-
-}
-
-
-
-.nav-links li:hover{
-
-    color:#ff6b00;
-
+.nav-item:hover {
+    color: #ff6b00;
+    background: rgba(255, 107, 0, 0.1);
 }
 
 
@@ -177,6 +157,72 @@
 
     background:#ff8425;
 
+}
+
+.user-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.my-bookings-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #ff6b00 0%, #e65c00 100%);
+    color: white;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.my-bookings-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 107, 0, 0.4);
+}
+
+.view-profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.view-profile-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: #ffffff;
+}
+
+.nav-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-logout-btn:hover {
+    background: #dc2626;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
 

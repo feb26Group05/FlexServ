@@ -162,7 +162,7 @@ body {
 .forgot {
   display: block;
   text-align: right;
-  color: #3d8cff;
+  color: #ff7a00;
   text-decoration: none;
   margin-bottom: 20px;
 }
@@ -250,8 +250,9 @@ body {
 }
 
 .register a {
-  color: #3d8cff;
+  color: #ff7a00;
   text-decoration: none;
+  font-weight: 600;
 }
 
 /* Tablet */

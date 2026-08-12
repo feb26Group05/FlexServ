@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import adminApi from "../../api/adminApi";
+import businessApi from "../../api/businessApi";
+import api from "../../api/api";
 import "./AdminDashboard.css";
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/authSlice";
@@ -18,12 +19,24 @@ import {
   FaTimes,
   FaSync,
   FaEye,
-  FaFilter
+  FaFilter,
+  FaPlus,
+  FaTrash,
+  FaUserCog,
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaStar,
+  FaCommentDots,
+  FaQuoteLeft,
+  FaUser
 } from "react-icons/fa";
+
+import { useToast } from "../../components/Toast/ToastContext";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const toast = useToast();
 
   // Active Tab: "admins" | "users" | "providers" | "services" | "categories" | "bookings"
   const [activeTab, setActiveTab] = useState("admins");
@@ -68,11 +81,44 @@ export default function AdminDashboard() {
   });
   const [adminRegistering, setAdminRegistering] = useState(false);
 
+  // Add Category Modal
+  const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
+  const [categoryForm, setCategoryForm] = useState({
+    name: "",
+    description: "",
+  });
+  const [categorySubmitting, setCategorySubmitting] = useState(false);
+
+  // Delete Category Modal
+  const [deleteCategoryModal, setDeleteCategoryModal] = useState({
+    isOpen: false,
+    category: null,
+  });
+  const [categoryDeleting, setCategoryDeleting] = useState(false);
+
+  // Booking Status Updating State
+  const [updatingBookingId, setUpdatingBookingId] = useState(null);
+
+  // Provider Customer Reviews Modal State
+  const [providerReviewsModal, setProviderReviewsModal] = useState({
+    isOpen: false,
+    provider: null,
+    reviews: [],
+    loading: false,
+  });
+
+  // Delete Review Confirmation Modal State
+  const [deleteReviewModal, setDeleteReviewModal] = useState({
+    isOpen: false,
+    review: null,
+    deleting: false,
+  });
+
   // 1. GET ALL ADMINS: GET /api/admin
   const fetchAllAdmins = async () => {
     try {
       setLoading(true);
-      const res = await adminApi.get("/admin");
+      const res = await businessApi.get("/admin");
       const list = Array.isArray(res.data?.data) ? res.data.data : [];
       setAdminsList(list);
       setCounts(prev => ({ ...prev, admins: list.length }));
@@ -88,7 +134,7 @@ export default function AdminDashboard() {
     if (!id) return;
     try {
       setLoading(true);
-      const res = await adminApi.get(`/admin/${id}`);
+      const res = await businessApi.get(`/admin/${id}`);
       const item = res.data?.data || res.data;
       if (item) {
         setSelectedRecord(item);
@@ -96,7 +142,7 @@ export default function AdminDashboard() {
         setIsDetailModalOpen(true);
       }
     } catch (err) {
-      alert("Admin not found with ID: " + id);
+      toast.error("Admin not found with ID: " + id);
     } finally {
       setLoading(false);
     }
@@ -106,7 +152,7 @@ export default function AdminDashboard() {
   const fetchAllUsers = async () => {
     try {
       setLoading(true);
-      const res = await adminApi.get("/admin/users");
+      const res = await businessApi.get("/admin/users");
       const list = Array.isArray(res.data?.data) ? res.data.data : [];
       setUsersList(list);
       setCounts(prev => ({ ...prev, users: list.length }));
@@ -122,15 +168,15 @@ export default function AdminDashboard() {
     if (!id) return;
     try {
       setLoading(true);
-      const res = await adminApi.get(`/admin/users/${id}`);
+      const res = await businessApi.get(`/admin/users/${id}`);
       const item = res.data?.data || res.data;
       if (item) {
         setSelectedRecord(item);
-        setRecordType("USERS");
+        setRecordType("USER");
         setIsDetailModalOpen(true);
       }
     } catch (err) {
-      alert("User not found with ID: " + id);
+      toast.error("User not found with ID: " + id);
     } finally {
       setLoading(false);
     }
@@ -145,7 +191,7 @@ export default function AdminDashboard() {
     }
     try {
       setLoading(true);
-      const res = await adminApi.get(`/admin/users/role/${role}`);
+      const res = await businessApi.get(`/admin/users/role/${role}`);
       const list = Array.isArray(res.data?.data) ? res.data.data : [];
       setUsersList(list);
     } catch (err) {
@@ -159,7 +205,7 @@ export default function AdminDashboard() {
   const fetchAllProviders = async () => {
     try {
       setLoading(true);
-      const res = await adminApi.get("/admin/providers");
+      const res = await businessApi.get("/admin/providers");
       const list = Array.isArray(res.data?.data) ? res.data.data : [];
       setProvidersList(list);
       setCounts(prev => ({ ...prev, providers: list.length }));
@@ -175,7 +221,7 @@ export default function AdminDashboard() {
     if (!id) return;
     try {
       setLoading(true);
-      const res = await adminApi.get(`/admin/providers/${id}`);
+      const res = await businessApi.get(`/admin/providers/${id}`);
       const item = res.data?.data || res.data;
       if (item) {
         setSelectedRecord(item);
@@ -183,7 +229,7 @@ export default function AdminDashboard() {
         setIsDetailModalOpen(true);
       }
     } catch (err) {
-      alert("Provider not found with ID: " + id);
+      toast.error("Provider not found with ID: " + id);
     } finally {
       setLoading(false);
     }
@@ -193,7 +239,7 @@ export default function AdminDashboard() {
   const fetchAllServices = async () => {
     try {
       setLoading(true);
-      const res = await adminApi.get("/admin/services");
+      const res = await businessApi.get("/admin/services");
       const list = Array.isArray(res.data?.data) ? res.data.data : [];
       setServicesList(list);
       setCounts(prev => ({ ...prev, services: list.length }));
@@ -209,7 +255,7 @@ export default function AdminDashboard() {
     if (!id) return;
     try {
       setLoading(true);
-      const res = await adminApi.get(`/admin/services/${id}`);
+      const res = await businessApi.get(`/admin/services/${id}`);
       const item = res.data?.data || res.data;
       if (item) {
         setSelectedRecord(item);
@@ -217,7 +263,7 @@ export default function AdminDashboard() {
         setIsDetailModalOpen(true);
       }
     } catch (err) {
-      alert("Service not found with ID: " + id);
+      toast.error("Service not found with ID: " + id);
     } finally {
       setLoading(false);
     }
@@ -227,7 +273,7 @@ export default function AdminDashboard() {
   const fetchAllCategories = async () => {
     try {
       setLoading(true);
-      const res = await adminApi.get("/admin/categories");
+      const res = await businessApi.get("/admin/categories");
       const list = Array.isArray(res.data?.data) ? res.data.data : [];
       setCategoriesList(list);
       setCounts(prev => ({ ...prev, categories: list.length }));
@@ -243,7 +289,7 @@ export default function AdminDashboard() {
     if (!id) return;
     try {
       setLoading(true);
-      const res = await adminApi.get(`/admin/categories/${id}`);
+      const res = await businessApi.get(`/admin/categories/${id}`);
       const item = res.data?.data || res.data;
       if (item) {
         setSelectedRecord(item);
@@ -251,9 +297,53 @@ export default function AdminDashboard() {
         setIsDetailModalOpen(true);
       }
     } catch (err) {
-      alert("Category not found with ID: " + id);
+      toast.error("Category not found with ID: " + id);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // CREATE CATEGORY: POST /api/admin/categories
+  const handleCreateCategory = async (e) => {
+    e.preventDefault();
+    if (!categoryForm.name.trim()) {
+      toast.error("Category name is required.");
+      return;
+    }
+    try {
+      setCategorySubmitting(true);
+      const res = await businessApi.post("/admin/categories", categoryForm);
+      toast.success(res.data?.message || "Category Created Successfully!");
+      setIsAddCategoryModalOpen(false);
+      setCategoryForm({ name: "", description: "" });
+      fetchAllCategories();
+    } catch (err) {
+      console.error("Failed to create category:", err);
+      toast.error(
+        "Failed to create category: " + (err.response?.data?.message || err.message)
+      );
+    } finally {
+      setCategorySubmitting(false);
+    }
+  };
+
+  // DELETE CATEGORY: DELETE /api/admin/categories/{id}
+  const handleDeleteCategory = async () => {
+    if (!deleteCategoryModal.category) return;
+    try {
+      setCategoryDeleting(true);
+      const id = deleteCategoryModal.category.id;
+      const res = await businessApi.delete(`/admin/categories/${id}`);
+      toast.success(res.data?.message || "Category Deleted Successfully!");
+      setDeleteCategoryModal({ isOpen: false, category: null });
+      fetchAllCategories();
+    } catch (err) {
+      console.error("Failed to delete category:", err);
+      toast.error(
+        "Failed to delete category: " + (err.response?.data?.message || err.message)
+      );
+    } finally {
+      setCategoryDeleting(false);
     }
   };
 
@@ -261,7 +351,7 @@ export default function AdminDashboard() {
   const fetchAllBookings = async () => {
     try {
       setLoading(true);
-      const res = await adminApi.get("/admin/bookings");
+      const res = await businessApi.get("/admin/bookings");
       const list = Array.isArray(res.data?.data) ? res.data.data : [];
       setBookingsList(list);
       setCounts(prev => ({ ...prev, bookings: list.length }));
@@ -277,7 +367,7 @@ export default function AdminDashboard() {
     if (!id) return;
     try {
       setLoading(true);
-      const res = await adminApi.get(`/admin/bookings/${id}`);
+      const res = await businessApi.get(`/admin/bookings/${id}`);
       const item = res.data?.data || res.data;
       if (item) {
         setSelectedRecord(item);
@@ -285,9 +375,94 @@ export default function AdminDashboard() {
         setIsDetailModalOpen(true);
       }
     } catch (err) {
-      alert("Booking not found with ID: " + id);
+      toast.error("Booking not found with ID: " + id);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 14. ADMIN UPDATE BOOKING STATUS: PUT /api/admin/bookings/{id}/status?status=...
+  const handleUpdateBookingStatus = async (bookingId, newStatus) => {
+    if (!bookingId || !newStatus) return;
+    try {
+      setUpdatingBookingId(bookingId);
+      await businessApi.put(`/admin/bookings/${bookingId}/status`, null, {
+        params: { status: newStatus },
+      });
+
+      toast.success(`Booking #${bookingId} status updated to ${newStatus}!`);
+
+      // Optimistically update list
+      setBookingsList(prev =>
+        prev.map(b => (b.id === bookingId ? { ...b, status: newStatus } : b))
+      );
+
+      // If modal is open for this booking, update selectedRecord
+      if (selectedRecord && selectedRecord.id === bookingId) {
+        setSelectedRecord(prev => ({ ...prev, status: newStatus }));
+      }
+    } catch (err) {
+      console.error("Failed to update booking status:", err);
+      toast.error(
+        "Failed to update booking status: " + (err.response?.data?.message || err.message)
+      );
+    } finally {
+      setUpdatingBookingId(null);
+    }
+  };
+
+  // 15. FETCH REVIEWS FOR PROVIDER: GET /api/reviews/provider/{providerId}
+  const handleOpenProviderReviews = async (provider) => {
+    if (!provider) return;
+    try {
+      setProviderReviewsModal({
+        isOpen: true,
+        provider,
+        reviews: [],
+        loading: true,
+      });
+
+      const res = await api.get(`/reviews/provider/${provider.id}`);
+      const list = Array.isArray(res.data?.data) ? res.data.data : [];
+      setProviderReviewsModal({
+        isOpen: true,
+        provider,
+        reviews: list,
+        loading: false,
+      });
+    } catch (err) {
+      console.error("Failed to fetch provider reviews:", err);
+      toast.error(
+        "Failed to load reviews for " + (provider.companyName || provider.userName)
+      );
+      setProviderReviewsModal(prev => ({ ...prev, loading: false }));
+    }
+  };
+
+  // 16. DELETE REVIEW: DELETE /api/reviews/{id}
+  const handleDeleteReview = async () => {
+    if (!deleteReviewModal.review) return;
+    try {
+      setDeleteReviewModal(prev => ({ ...prev, deleting: true }));
+      const reviewId = deleteReviewModal.review.id;
+      const res = await api.delete(`/reviews/${reviewId}`);
+      toast.success(res.data?.message || "Customer Review Deleted Successfully!");
+
+      // Remove review from modal list
+      setProviderReviewsModal(prev => ({
+        ...prev,
+        reviews: prev.reviews.filter(r => r.id !== reviewId),
+      }));
+
+      setDeleteReviewModal({ isOpen: false, review: null, deleting: false });
+      // Refresh providers list to show recalculated rating
+      fetchAllProviders();
+    } catch (err) {
+      console.error("Failed to delete review:", err);
+      toast.error(
+        "Failed to delete review: " + (err.response?.data?.message || err.message)
+      );
+      setDeleteReviewModal(prev => ({ ...prev, deleting: false }));
     }
   };
 
@@ -317,6 +492,8 @@ export default function AdminDashboard() {
     e.preventDefault();
     if (!lookupId) return;
 
+    setSearchQuery(lookupId);
+
     if (activeTab === "admins") fetchAdminById(lookupId);
     else if (activeTab === "users") fetchUserById(lookupId);
     else if (activeTab === "providers") fetchProviderById(lookupId);
@@ -330,8 +507,8 @@ export default function AdminDashboard() {
     e.preventDefault();
     try {
       setAdminRegistering(true);
-      await adminApi.post("/admin/register", adminForm);
-      alert("Admin Account Created Successfully!");
+      await businessApi.post("/admin/register", adminForm);
+      toast.success("Admin Account Created Successfully!");
       setIsAddAdminModalOpen(false);
       setAdminForm({
         name: "",
@@ -342,7 +519,7 @@ export default function AdminDashboard() {
       });
       fetchAllAdmins();
     } catch (err) {
-      alert("Registration failed: " + (err.response?.data?.message || err.message));
+      toast.error("Registration failed: " + (err.response?.data?.message || err.message));
     } finally {
       setAdminRegistering(false);
     }
@@ -354,9 +531,17 @@ export default function AdminDashboard() {
     setIsDetailModalOpen(true);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (e) {
+      console.warn("Server logout notification:", e);
+    }
     Cookies.remove("JWT");
+    localStorage.removeItem("user");
+    localStorage.removeItem("userRole");
     dispatch(logout());
+    toast.success("Logged out successfully");
     navigate("/login");
   };
 
@@ -371,6 +556,19 @@ export default function AdminDashboard() {
     );
   };
 
+  // Status Badge Helper
+  const getBookingStatusBadge = (status) => {
+    const s = (status || "PENDING").toUpperCase();
+    let badgeClass = "badge-status-pending";
+    if (s === "CONFIRMED") badgeClass = "badge-status-confirmed";
+    else if (s === "IN_PROGRESS") badgeClass = "badge-status-progress";
+    else if (s === "COMPLETED") badgeClass = "badge-status-completed";
+    else if (s === "CANCELLED") badgeClass = "badge-status-cancelled";
+    else if (s === "REJECTED") badgeClass = "badge-status-rejected";
+
+    return <span className={`booking-status-pill ${badgeClass}`}>{s}</span>;
+  };
+
   return (
     <div className="admin-dashboard-container">
       <div className="dashboard-wrapper">
@@ -382,10 +580,21 @@ export default function AdminDashboard() {
             </div>
             <div className="brand-info">
               <h1>FlexServ <span>ADMIN PORTAL</span></h1>
+              <p>
+                <span className="status-indicator"></span>
+                System Master Control & Analytics
+              </p>
             </div>
           </div>
 
           <div className="header-right">
+            <button
+              className="btn-soft-delete-hub"
+              onClick={() => navigate("/admin/accounts")}
+              title="Dedicated Soft Delete & User Account Control Center"
+            >
+              <FaUserCog /> Account & Soft-Delete Hub
+            </button>
             <button className="btn-primary-action" onClick={() => setIsAddAdminModalOpen(true)}>
               <FaUserPlus /> Register Admin
             </button>
@@ -397,7 +606,7 @@ export default function AdminDashboard() {
 
         {/* Metrics Grid Cards */}
         <div className="metrics-grid">
-          <div className="metric-card" onClick={() => setActiveTab("admins")}>
+          <div className={`metric-card ${activeTab === "admins" ? "active" : ""}`} onClick={() => setActiveTab("admins")}>
             <div className="metric-icon indigo"><FaShieldAlt /></div>
             <div className="metric-data">
               <h3>{counts.admins}</h3>
@@ -405,7 +614,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="metric-card" onClick={() => setActiveTab("users")}>
+          <div className={`metric-card ${activeTab === "users" ? "active" : ""}`} onClick={() => setActiveTab("users")}>
             <div className="metric-icon cyan"><FaUsers /></div>
             <div className="metric-data">
               <h3>{counts.users}</h3>
@@ -413,7 +622,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="metric-card" onClick={() => setActiveTab("providers")}>
+          <div className={`metric-card ${activeTab === "providers" ? "active" : ""}`} onClick={() => setActiveTab("providers")}>
             <div className="metric-icon purple"><FaBriefcase /></div>
             <div className="metric-data">
               <h3>{counts.providers}</h3>
@@ -421,7 +630,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="metric-card" onClick={() => setActiveTab("services")}>
+          <div className={`metric-card ${activeTab === "services" ? "active" : ""}`} onClick={() => setActiveTab("services")}>
             <div className="metric-icon emerald"><FaConciergeBell /></div>
             <div className="metric-data">
               <h3>{counts.services}</h3>
@@ -429,7 +638,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="metric-card" onClick={() => setActiveTab("categories")}>
+          <div className={`metric-card ${activeTab === "categories" ? "active" : ""}`} onClick={() => setActiveTab("categories")}>
             <div className="metric-icon orange"><FaThList /></div>
             <div className="metric-data">
               <h3>{counts.categories}</h3>
@@ -437,7 +646,7 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="metric-card" onClick={() => setActiveTab("bookings")}>
+          <div className={`metric-card ${activeTab === "bookings" ? "active" : ""}`} onClick={() => setActiveTab("bookings")}>
             <div className="metric-icon rose"><FaCalendarCheck /></div>
             <div className="metric-data">
               <h3>{counts.bookings}</h3>
@@ -465,11 +674,11 @@ export default function AdminDashboard() {
               <FaThList /> Categories
             </button>
             <button className={`tab-button ${activeTab === "bookings" ? "active" : ""}`} onClick={() => setActiveTab("bookings")}>
-              <FaCalendarCheck /> Bookings
+              <FaCalendarCheck /> Bookings & Status Control
             </button>
           </div>
 
-          {/* Search, Filter & Lookup Bar */}
+          {/* Search, Filter & Toolbar Bar */}
           <div className="toolbar-container">
             <div className="search-field-box">
               <FaSearch />
@@ -482,6 +691,16 @@ export default function AdminDashboard() {
             </div>
 
             <div className="filters-group">
+              {/* Category creation button when in categories tab */}
+              {activeTab === "categories" && (
+                <button
+                  className="btn-add-category"
+                  onClick={() => setIsAddCategoryModalOpen(true)}
+                >
+                  <FaPlus /> Add New Category
+                </button>
+              )}
+
               {/* Role filter dropdown for users tab */}
               {activeTab === "users" && (
                 <select
@@ -527,7 +746,7 @@ export default function AdminDashboard() {
           {/* Data Table */}
           <div className="table-scroll-container">
             {loading ? (
-              <div className="loader-box">Retrieving dataset from AdminService...</div>
+              <div className="loader-box">Retrieving dataset from BusinessService...</div>
             ) : (
               <table className="custom-table">
                 <thead>
@@ -536,7 +755,7 @@ export default function AdminDashboard() {
                     <th>Entity Details</th>
                     <th>Sub Information</th>
                     <th>Role / Status</th>
-                    <th>Actions</th>
+                    <th>Actions & Status Management</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -581,9 +800,11 @@ export default function AdminDashboard() {
                         <span className={`badge-role-tag ${item.role?.toLowerCase()}`}>{item.role}</span>
                       </td>
                       <td>
-                        <button className="btn-action-icon" onClick={() => openViewModal(item, "USER")}>
-                          <FaEye /> View Details
-                        </button>
+                        <div className="actions-cluster">
+                          <button className="btn-action-icon" onClick={() => openViewModal(item, "USER")}>
+                            <FaEye /> View Details
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -600,14 +821,34 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                       </td>
-                      <td>{item.userEmail} | {item.experienceYears} Yrs Exp</td>
+                      <td>
+                        <div className="provider-sub-info">
+                          <span>{item.userEmail}</span>
+                          <span>{item.experienceYears} Yrs Exp • Rating: <strong style={{ color: "#f59e0b" }}>⭐ {item.rating || "5.0"}</strong></span>
+                        </div>
+                      </td>
                       <td>
                         <span className="badge-role-tag provider">PROVIDER</span>
                       </td>
                       <td>
-                        <button className="btn-action-icon" onClick={() => openViewModal(item, "PROVIDER")}>
-                          <FaEye /> View Details
-                        </button>
+                        <div className="actions-cluster">
+                          <button
+                            className="btn-action-icon"
+                            onClick={() => openViewModal(item, "PROVIDER")}
+                            title="View Provider Details"
+                          >
+                            <FaEye /> View Details
+                          </button>
+
+                          {/* New Reviews button to view and delete customer reviews */}
+                          <button
+                            className="btn-action-reviews"
+                            onClick={() => handleOpenProviderReviews(item)}
+                            title="View and delete customer reviews given to this provider"
+                          >
+                            <FaStar /> Reviews
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -623,7 +864,7 @@ export default function AdminDashboard() {
                       </td>
                       <td>Category: {item.categoryName}</td>
                       <td>
-                        <span style={{ color: "var(--brand-emerald, #10b981)", fontWeight: "700" }}>${item.price}</span>
+                        <span style={{ color: "var(--brand-emerald, #10b981)", fontWeight: "700" }}>₹{item.price}</span>
                       </td>
                       <td>
                         <button className="btn-action-icon" onClick={() => openViewModal(item, "SERVICE")}>
@@ -633,41 +874,80 @@ export default function AdminDashboard() {
                     </tr>
                   ))}
 
+                  {/* Categories Tab with Create & Delete Support */}
                   {activeTab === "categories" && filterList(categoriesList).map((item) => (
                     <tr key={item.id}>
                       <td className="row-id">#{item.id}</td>
                       <td>
                         <div className="name-email">
-                          <h4>{item.name}</h4>
+                          <h4 style={{ color: "white", display: "flex", alignItems: "center", gap: "8px" }}>
+                            <FaThList style={{ color: "#ff7a00" }} /> {item.name}
+                          </h4>
                         </div>
                       </td>
                       <td>{item.description || "System Service Category"}</td>
                       <td><span className="badge-role-tag admin">CATEGORY</span></td>
                       <td>
-                        <button className="btn-action-icon" onClick={() => openViewModal(item, "CATEGORY")}>
-                          <FaEye /> View Details
-                        </button>
+                        <div className="actions-cluster">
+                          <button className="btn-action-icon" onClick={() => openViewModal(item, "CATEGORY")}>
+                            <FaEye /> View
+                          </button>
+                          <button
+                            className="btn-delete-category"
+                            onClick={() => setDeleteCategoryModal({ isOpen: true, category: item })}
+                            title="Delete Category"
+                          >
+                            <FaTrash /> Delete
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
 
+                  {/* Bookings Tab with Admin Status Change Privileges */}
                   {activeTab === "bookings" && filterList(bookingsList).map((item) => (
                     <tr key={item.id}>
                       <td className="row-id">#{item.id}</td>
                       <td>
                         <div className="name-email">
-                          <h4>Customer: {item.customerName}</h4>
-                          <p>Provider: {item.providerCompanyName}</p>
+                          <h4>Customer: {item.customerName || `User #${item.customerId}`}</h4>
+                          <p>Provider: {item.providerCompanyName || `Provider #${item.providerId}`}</p>
                         </div>
                       </td>
-                      <td>Service: {item.serviceName} ({item.bookingDate})</td>
                       <td>
-                        <span style={{ color: "var(--brand-cyan, #38bdf8)", fontWeight: "700" }}>{item.status || "CONFIRMED"}</span>
+                        <div className="booking-service-info">
+                          <strong>{item.serviceName}</strong>
+                          <p>Date: {item.bookingDate || "N/A"} {item.bookingTime ? `• ${item.bookingTime}` : ""}</p>
+                          <span className="price-tag-booking">₹{item.totalPrice}</span>
+                        </div>
                       </td>
                       <td>
-                        <button className="btn-action-icon" onClick={() => openViewModal(item, "BOOKING")}>
-                          <FaEye /> View Details
-                        </button>
+                        {getBookingStatusBadge(item.status)}
+                      </td>
+                      <td>
+                        <div className="booking-action-controls">
+                          {/* Interactive Status Selector Dropdown */}
+                          <div className="status-selector-wrapper">
+                            <select
+                              value={item.status || "CONFIRMED"}
+                              onChange={(e) => handleUpdateBookingStatus(item.id, e.target.value)}
+                              className="select-booking-status"
+                              disabled={updatingBookingId === item.id}
+                              title="Admin privilege: change status"
+                            >
+                              <option value="PENDING">PENDING</option>
+                              <option value="CONFIRMED">CONFIRMED</option>
+                              <option value="IN_PROGRESS">IN_PROGRESS</option>
+                              <option value="COMPLETED">COMPLETED</option>
+                              <option value="CANCELLED">CANCELLED</option>
+                              <option value="REJECTED">REJECTED</option>
+                            </select>
+                          </div>
+
+                          <button className="btn-action-icon" onClick={() => openViewModal(item, "BOOKING")}>
+                            <FaEye /> Details
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -683,7 +963,10 @@ export default function AdminDashboard() {
         <div className="modal-overlay" onClick={() => setIsDetailModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header-bar">
-              <h3>{recordType}View Details</h3>
+              <div className="modal-header-title">
+                <span className="modal-badge-tag">{recordType}</span>
+                <h3>View Detailed Information</h3>
+              </div>
               <button className="btn-close" onClick={() => setIsDetailModalOpen(false)}>
                 <FaTimes />
               </button>
@@ -708,6 +991,7 @@ export default function AdminDashboard() {
                   <div className="detail-row"><label>Email Address</label><span>{selectedRecord.email}</span></div>
                   <div className="detail-row"><label>Phone Number</label><span>{selectedRecord.phone}</span></div>
                   <div className="detail-row"><label>Assigned Role</label><span>{selectedRecord.role}</span></div>
+                  <div className="detail-row"><label>Active Status</label><span>{selectedRecord.active !== false ? "ACTIVE" : "INACTIVE / SOFT-DELETED"}</span></div>
                 </>
               )}
 
@@ -719,6 +1003,7 @@ export default function AdminDashboard() {
                   <div className="detail-row"><label>Experience</label><span>{selectedRecord.experienceYears} Years</span></div>
                   <div className="detail-row"><label>Rating</label><span>{selectedRecord.rating || "5.0"}</span></div>
                   <div className="detail-row"><label>Bio</label><span>{selectedRecord.bio || "N/A"}</span></div>
+                  <div className="detail-row"><label>Availability</label><span>{selectedRecord.companyAvailable !== false ? "AVAILABLE" : "UNAVAILABLE"}</span></div>
                 </>
               )}
 
@@ -726,7 +1011,7 @@ export default function AdminDashboard() {
                 <>
                   <div className="detail-row"><label>Service Title</label><span>{selectedRecord.name}</span></div>
                   <div className="detail-row"><label>Category</label><span>{selectedRecord.categoryName}</span></div>
-                  <div className="detail-row"><label>Price ($)</label><span>${selectedRecord.price}</span></div>
+                  <div className="detail-row"><label>Price (₹)</label><span>₹{selectedRecord.price}</span></div>
                   <div className="detail-row"><label>Duration</label><span>{selectedRecord.duration} mins</span></div>
                 </>
               )}
@@ -744,9 +1029,156 @@ export default function AdminDashboard() {
                   <div className="detail-row"><label>Provider Company</label><span>{selectedRecord.providerCompanyName}</span></div>
                   <div className="detail-row"><label>Service Name</label><span>{selectedRecord.serviceName}</span></div>
                   <div className="detail-row"><label>Booking Date</label><span>{selectedRecord.bookingDate}</span></div>
-                  <div className="detail-row"><label>Total Price</label><span>${selectedRecord.totalPrice}</span></div>
+                  <div className="detail-row"><label>Total Price</label><span>₹{selectedRecord.totalPrice}</span></div>
+                  <div className="detail-row"><label>Current Status</label><span>{getBookingStatusBadge(selectedRecord.status)}</span></div>
+
+                  {/* Admin Status Override in Modal */}
+                  <div className="modal-status-override-box">
+                    <label>Admin Status Override:</label>
+                    <div className="status-buttons-row">
+                      {["PENDING", "CONFIRMED", "IN_PROGRESS", "COMPLETED", "CANCELLED", "REJECTED"].map((st) => (
+                        <button
+                          key={st}
+                          className={`btn-status-pill ${selectedRecord.status === st ? "active-st" : ""}`}
+                          onClick={() => handleUpdateBookingStatus(selectedRecord.id, st)}
+                          disabled={updatingBookingId === selectedRecord.id}
+                        >
+                          {st}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Provider Customer Reviews Modal */}
+      {providerReviewsModal.isOpen && providerReviewsModal.provider && (
+        <div className="modal-overlay" onClick={() => setProviderReviewsModal({ ...providerReviewsModal, isOpen: false })}>
+          <div className="modal-reviews-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header-bar">
+              <div className="modal-header-title">
+                <span className="modal-badge-tag gold"><FaStar /> REVIEWS</span>
+                <h3>
+                  Reviews for {providerReviewsModal.provider.companyName || providerReviewsModal.provider.userName}
+                </h3>
+              </div>
+              <button
+                className="btn-close"
+                onClick={() => setProviderReviewsModal({ ...providerReviewsModal, isOpen: false })}
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            <div className="reviews-summary-banner">
+              <div className="summary-rating-box">
+                <div className="rating-large-num">⭐ {providerReviewsModal.provider.rating || "5.0"}</div>
+                <div className="rating-stars-label">
+                  <strong>Average Rating</strong>
+                  <p>{providerReviewsModal.reviews.length} Customer Feedback{providerReviewsModal.reviews.length === 1 ? "" : "s"}</p>
+                </div>
+              </div>
+              <div className="provider-company-tag">
+                <span>Provider ID: #{providerReviewsModal.provider.id}</span>
+              </div>
+            </div>
+
+            {providerReviewsModal.loading ? (
+              <div className="reviews-loader">
+                <div className="spinner-glow"></div>
+                <p>Loading customer reviews...</p>
+              </div>
+            ) : providerReviewsModal.reviews.length === 0 ? (
+              <div className="empty-reviews-state">
+                <FaCommentDots />
+                <h4>No Customer Reviews Found</h4>
+                <p>There are no reviews submitted for this service provider yet.</p>
+              </div>
+            ) : (
+              <div className="reviews-scroll-list">
+                {providerReviewsModal.reviews.map((rev) => (
+                  <div key={rev.id} className="review-card-item">
+                    <div className="review-card-header">
+                      <div className="reviewer-info">
+                        <div className="reviewer-avatar">
+                          <FaUser />
+                        </div>
+                        <div>
+                          <h5>{rev.customerName || `Customer #${rev.customerId}`}</h5>
+                          <span className="review-date-text">
+                            Booking #{rev.bookingId} • {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : "Verified Customer"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="review-rating-stars">
+                        {[...Array(5)].map((_, i) => (
+                          <FaStar
+                            key={i}
+                            className={i < (rev.rating || 5) ? "star-filled" : "star-empty"}
+                          />
+                        ))}
+                        <span className="rating-num-badge">{rev.rating}.0</span>
+                      </div>
+                    </div>
+
+                    <div className="review-comment-body">
+                      <FaQuoteLeft className="quote-icon" />
+                      <p>{rev.comment || "Customer did not provide written feedback."}</p>
+                    </div>
+
+                    <div className="review-card-footer">
+                      <span className="review-id-label">Review ID: #{rev.id}</span>
+                      <button
+                        className="btn-delete-review"
+                        onClick={() => setDeleteReviewModal({ isOpen: true, review: rev, deleting: false })}
+                        title="Delete this customer review"
+                      >
+                        <FaTrash /> Delete Review
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Delete Review Confirmation Modal */}
+      {deleteReviewModal.isOpen && deleteReviewModal.review && (
+        <div className="modal-overlay" onClick={() => setDeleteReviewModal({ isOpen: false, review: null, deleting: false })}>
+          <div className="modal-confirm-box" onClick={(e) => e.stopPropagation()}>
+            <div className="delete-warning-icon">
+              <FaTrash />
+            </div>
+
+            <h3>Delete Customer Review?</h3>
+            <p className="delete-warning-text">
+              Are you sure you want to permanently delete Review #{deleteReviewModal.review.id} given by{" "}
+              <strong>{deleteReviewModal.review.customerName || "Customer"}</strong>?
+              This will automatically recalculate the provider's average star rating.
+            </p>
+
+            <div className="confirm-buttons-row">
+              <button
+                className="btn-cancel-modal"
+                onClick={() => setDeleteReviewModal({ isOpen: false, review: null, deleting: false })}
+                disabled={deleteReviewModal.deleting}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-confirm-delete-cat"
+                onClick={handleDeleteReview}
+                disabled={deleteReviewModal.deleting}
+              >
+                {deleteReviewModal.deleting ? "Deleting..." : "Yes, Delete Review"}
+              </button>
             </div>
           </div>
         </div>
@@ -800,17 +1232,6 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              {/* <div className="form-field-group">
-                <label>Department</label>
-                <input
-                  type="text"
-                  placeholder="System Administration"
-                  value={adminForm.department}
-                  onChange={(e) => setAdminForm({ ...adminForm, department: e.target.value })}
-                  className="input-styled"
-                />
-              </div> */}
-
               <div className="form-field-group">
                 <label>Password *</label>
                 <input
@@ -827,6 +1248,98 @@ export default function AdminDashboard() {
                 {adminRegistering ? "Registering..." : "Submit Admin Account"}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Category Modal */}
+      {isAddCategoryModalOpen && (
+        <div className="modal-overlay" onClick={() => setIsAddCategoryModalOpen(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header-bar">
+              <div className="modal-header-title">
+                <span className="modal-badge-tag orange">NEW</span>
+                <h3>Add New Service Category</h3>
+              </div>
+              <button className="btn-close" onClick={() => setIsAddCategoryModalOpen(false)}>
+                <FaTimes />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateCategory} className="modal-form-body">
+              <div className="form-field-group">
+                <label>Category Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g., Home Automation, Sanitization, Gardening"
+                  value={categoryForm.name}
+                  onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
+                  className="input-styled"
+                />
+              </div>
+
+              <div className="form-field-group">
+                <label>Description (Optional)</label>
+                <textarea
+                  rows={3}
+                  placeholder="Describe the services included under this category..."
+                  value={categoryForm.description}
+                  onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
+                  className="input-styled textarea-styled"
+                />
+              </div>
+
+              <div className="modal-form-actions">
+                <button
+                  type="button"
+                  className="btn-glass-secondary"
+                  onClick={() => setIsAddCategoryModalOpen(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary-action"
+                  disabled={categorySubmitting}
+                >
+                  {categorySubmitting ? "Creating Category..." : "Create Category"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Category Confirmation Modal */}
+      {deleteCategoryModal.isOpen && deleteCategoryModal.category && (
+        <div className="modal-overlay" onClick={() => setDeleteCategoryModal({ isOpen: false, category: null })}>
+          <div className="modal-confirm-box" onClick={(e) => e.stopPropagation()}>
+            <div className="delete-warning-icon">
+              <FaExclamationTriangle />
+            </div>
+
+            <h3>Delete Category "{deleteCategoryModal.category.name}"?</h3>
+            <p className="delete-warning-text">
+              Are you sure you want to permanently delete this category (ID #{deleteCategoryModal.category.id})? Any attached services will also be cleaned up.
+            </p>
+
+            <div className="confirm-buttons-row">
+              <button
+                className="btn-cancel-modal"
+                onClick={() => setDeleteCategoryModal({ isOpen: false, category: null })}
+                disabled={categoryDeleting}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-confirm-delete-cat"
+                onClick={handleDeleteCategory}
+                disabled={categoryDeleting}
+              >
+                {categoryDeleting ? "Deleting..." : "Yes, Delete Category"}
+              </button>
+            </div>
           </div>
         </div>
       )}

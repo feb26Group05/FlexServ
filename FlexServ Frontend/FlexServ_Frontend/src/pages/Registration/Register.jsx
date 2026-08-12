@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./Register.css";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import api from "../../api/api";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaUser,
   FaEnvelope,
@@ -10,10 +10,17 @@ import {
   FaUserTag,
   FaShieldAlt,
   FaHeadset,
+  FaBuilding,
+  FaAward,
+  FaFileAlt
 } from "react-icons/fa";
 
+import { useToast } from "../../components/Toast/ToastContext";
+
 function Register() {
-  const [accountType, setAccountType] = useState("CUSTOMER");
+  const navigate = useNavigate();
+  const toast = useToast();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -21,14 +28,14 @@ function Register() {
     phone: "",
     password: "",
     confirmPassword: "",
-
+    role: "",
     companyName: "",
     experienceYears: "",
-    bio: "",
-    serviceIds: [],
+    bio: ""
   });
 
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const validate = () => {
     let newErrors = {};
@@ -53,6 +60,16 @@ function Register() {
       newErrors.phone = "Phone number is required";
     } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
       newErrors.phone = "Enter a valid 10-digit mobile number";
+    }
+
+    if (!formData.role) {
+      newErrors.role = "Please select a role";
+    }
+
+    if (formData.role === "PROVIDER") {
+      if (!formData.companyName.trim()) {
+        newErrors.companyName = "Company name is required for service providers";
+      }
     }
 
     if (!formData.password) {
@@ -91,21 +108,26 @@ function Register() {
 
     if (!validate()) return;
 
+    setLoading(true);
+
     const requestData = {
       name: `${formData.firstName} ${formData.lastName}`,
       email: formData.email,
       phone: formData.phone,
       password: formData.password,
-      role: accountType,
+      role: formData.role,
     };
 
-    try {
-      const response = await axios.post(
-        "http://localhost:8081/api/auth/register",
-        requestData,
-      );
+    if (formData.role === "PROVIDER") {
+      requestData.companyName = formData.companyName;
+      requestData.experienceYears = formData.experienceYears ? parseInt(formData.experienceYears, 10) : 1;
+      requestData.bio = formData.bio;
+    }
 
-      alert(response.data.message || "Registration Successful");
+    try {
+      const response = await api.post("/auth/register", requestData);
+
+      toast.success(response.data.message || "Registration Successful! Please Login.");
 
       setFormData({
         firstName: "",
@@ -115,15 +137,21 @@ function Register() {
         password: "",
         confirmPassword: "",
         role: "",
+        companyName: "",
+        experienceYears: "",
+        bio: ""
       });
 
       setErrors({});
+      navigate("/login");
     } catch (error) {
       if (error.response) {
-        alert(error.response.data.message);
+        toast.error(error.response.data.message || "Registration Failed");
       } else {
-        alert(error.message);
+        toast.error(error.message || "Registration Failed");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -169,42 +197,12 @@ function Register() {
         </div>
 
         {/* Register Card */}
-
         <div className="register-card">
           <h1>Create Account</h1>
           <p>Register to continue</p>
 
-          {/* Account Type */}
-
-          <div className="input-group">
-            <label>Register As</label>
-
-            <div className="account-type-tabs">
-              <button
-                type="button"
-                className={
-                  accountType === "CUSTOMER" ? "tab-btn active" : "tab-btn"
-                }
-                onClick={() => setAccountType("CUSTOMER")}
-              >
-                Customer
-              </button>
-
-              <button
-                type="button"
-                className={
-                  accountType === "PROVIDER" ? "tab-btn active" : "tab-btn"
-                }
-                onClick={() => setAccountType("PROVIDER")}
-              >
-                Service Provider
-              </button>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit}>
             {/* Name Row */}
-
             <div className="row">
               <div className="input-group">
                 <label>First Name</label>
@@ -248,7 +246,6 @@ function Register() {
             </div>
 
             {/* Email */}
-
             <div className="input-group">
               <label>Email</label>
 
@@ -264,11 +261,12 @@ function Register() {
                 />
               </div>
 
-              {errors.email && <p className="error-text">{errors.email}</p>}
+              {errors.email && (
+                <p className="error-text">{errors.email}</p>
+              )}
             </div>
 
             {/* Phone */}
-
             <div className="input-group">
               <label>Phone</label>
 
@@ -284,64 +282,95 @@ function Register() {
                 />
               </div>
 
-              {errors.phone && <p className="error-text">{errors.phone}</p>}
+              {errors.phone && (
+                <p className="error-text">{errors.phone}</p>
+              )}
             </div>
 
-            {accountType === "PROVIDER" && (
-              <>
-                {/* Company Name */}
+            {/* Role */}
+            <div className="input-group">
+              <label>Role</label>
 
+              <div className="input-box">
+                <FaUserTag />
+
+                <select
+                  name="role"
+                  className="custom-select"
+                  value={formData.role}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Role</option>
+                  <option value="CUSTOMER">Customer</option>
+                  <option value="PROVIDER">Service Provider</option>
+                </select>
+              </div>
+
+              {errors.role && (
+                <p className="error-text">{errors.role}</p>
+              )}
+            </div>
+
+            {/* Conditional Service Provider Company Fields */}
+            {formData.role === "PROVIDER" && (
+              <>
                 <div className="input-group">
                   <label>Company Name</label>
 
                   <div className="input-box">
-                    <FaUser />
+                    <FaBuilding />
 
                     <input
                       type="text"
                       name="companyName"
-                      placeholder="Company Name"
-                      value={formData.companyName || ""}
+                      placeholder="e.g. Acme Plumbing Solutions"
+                      value={formData.companyName}
                       onChange={handleChange}
                     />
                   </div>
+
+                  {errors.companyName && (
+                    <p className="error-text">{errors.companyName}</p>
+                  )}
                 </div>
 
-                {/* Experience */}
+                <div className="row">
+                  <div className="input-group">
+                    <label>Years of Experience</label>
 
-                <div className="input-group">
-                  <label>Experience (Years)</label>
+                    <div className="input-box">
+                      <FaAward />
 
-                  <div className="input-box">
-                    <input
-                      type="number"
-                      name="experienceYears"
-                      placeholder="Years of Experience"
-                      value={formData.experienceYears || ""}
-                      onChange={handleChange}
-                    />
+                      <input
+                        type="number"
+                        name="experienceYears"
+                        placeholder="e.g. 5"
+                        value={formData.experienceYears}
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                {/* Bio */}
+                  <div className="input-group">
+                    <label>Company Bio</label>
 
-                <div className="input-group">
-                  <label>Bio</label>
+                    <div className="input-box">
+                      <FaFileAlt />
 
-                  <div className="input-box textarea-box">
-                    <textarea
-                      name="bio"
-                      placeholder="Tell customers about your services"
-                      value={formData.bio}
-                      onChange={handleChange}
-                    />
+                      <input
+                        type="text"
+                        name="bio"
+                        placeholder="Brief summary of services"
+                        value={formData.bio}
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
                 </div>
               </>
             )}
 
             {/* Password */}
-
             <div className="input-group">
               <label>Password</label>
 
@@ -363,7 +392,6 @@ function Register() {
             </div>
 
             {/* Confirm Password */}
-
             <div className="input-group">
               <label>Confirm Password</label>
 
@@ -380,16 +408,23 @@ function Register() {
               </div>
 
               {errors.confirmPassword && (
-                <p className="error-text">{errors.confirmPassword}</p>
+                <p className="error-text">
+                  {errors.confirmPassword}
+                </p>
               )}
             </div>
 
-            <button type="submit" className="register-btn">
-              Create Account
+            <button
+              type="submit"
+              className="register-btn"
+              disabled={loading}
+            >
+              {loading ? "Creating Account..." : "Create Account"}
             </button>
 
             <div className="register">
               Already have an account?
+
               <Link to="/login"> Login</Link>
             </div>
           </form>

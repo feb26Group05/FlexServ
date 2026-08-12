@@ -1,82 +1,108 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "../../redux/authSlice";
+import api from "../../api/api";
+import Cookies from "js-cookie";
+import MyBookingsModal from "../Booking/MyBookingsModal";
+import { FaCalendarCheck, FaSignOutAlt, FaUserCircle } from "react-icons/fa";
 import "./Navbar.css";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.auth.user);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  // Read user state from Redux store
-  const { user } = useSelector((state) => state.auth || {});
+  const [showMyBookings, setShowMyBookings] = useState(false);
 
-  const handleLogout = () => {
+  const handleNavClick = (sectionId) => {
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        if (sectionId) {
+          const el = document.getElementById(sectionId);
+          if (el) el.scrollIntoView({ behavior: "smooth" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      if (sectionId) {
+        const el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (e) {
+      console.warn("Logout error:", e);
+    }
+    Cookies.remove("JWT");
     localStorage.removeItem("token");
-    dispatch(logout()); // Properly clear Redux user session on logout
+    localStorage.removeItem("user");
+    localStorage.removeItem("userRole");
+    dispatch(logout());
     navigate("/login");
   };
 
   return (
-    <nav className="navbar">
-      <div className="navbar-logo">
-        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+    <>
+      <nav className="navbar">
+        <div className="navbar-logo" onClick={() => handleNavClick(null)}>
           <h1>FlexServ</h1>
-        </Link>
-      </div>
+        </div>
 
-      <ul className="nav-links">
-        <li>
-          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+        <ul className="nav-links">
+          <li className="nav-item" onClick={() => handleNavClick(null)}>
             Home
-          </Link>
-        </li>
-        <li>
-          <Link to="/services" style={{ textDecoration: "none", color: "inherit" }}>
+          </li>
+          <li className="nav-item" onClick={() => handleNavClick("services-section")}>
             Services
-          </Link>
-        </li>
-        <li>
-          <Link to="/providers" style={{ textDecoration: "none", color: "inherit" }}>
-            Providers
-          </Link>
-        </li>
-        <li>
-          <Link to="/about" style={{ textDecoration: "none", color: "inherit" }}>
-            About
-          </Link>
-        </li>
-      </ul>
+          </li>
+          <li className="nav-item" onClick={() => handleNavClick("categories-section")}>
+            Categories
+          </li>
+        </ul>
 
-      <div className="nav-buttons">
-        {user ? (
-          <>
-            <Link to="/profile">
-              <button className="nav-login-btn">👤 My Profile</button>
-            </Link>
+        <div className="nav-buttons">
+          {isAuthenticated && currentUser ? (
+            <div className="user-nav-actions">
+              <button
+                className="my-bookings-btn"
+                onClick={() => setShowMyBookings(true)}
+              >
+                <FaCalendarCheck /> My Bookings
+              </button>
 
-            {user.role === "ADMIN" && (
-              <Link to="/admin">
-                <button className="nav-login-btn" style={{ marginLeft: "10px" }}>
-                  Admin Portal
-                </button>
-              </Link>
-            )}
+              <button
+                className="view-profile-btn"
+                onClick={() => navigate("/profile")}
+              >
+                <FaUserCircle /> View Profile
+              </button>
 
-            <button 
-              className="nav-login-btn" 
-              onClick={handleLogout} 
-              style={{ marginLeft: "10px", backgroundColor: "#f43f5e" }}
-            >
-              Logout
+              <button className="nav-logout-btn" onClick={handleLogout}>
+                <FaSignOutAlt /> Logout
+              </button>
+            </div>
+          ) : (
+            <button className="nav-login-btn" onClick={() => navigate("/login")}>
+              Login
             </button>
-          </>
-        ) : (
-          <Link to="/login">
-            <button className="nav-login-btn">Login</button>
-          </Link>
-        )}
-      </div>
-    </nav>
+          )}
+        </div>
+      </nav>
+
+      {showMyBookings && (
+        <MyBookingsModal onClose={() => setShowMyBookings(false)} />
+      )}
+    </>
   );
 }

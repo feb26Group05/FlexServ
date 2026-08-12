@@ -12,10 +12,13 @@ import { useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import { loginSuccess } from "../../redux/authSlice";
 
+import { useToast } from "../../components/Toast/ToastContext";
+
 export default function Login() {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const toast = useToast();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -64,9 +67,21 @@ export default function Login() {
                 password,
             });
             
-            dispatch(loginSuccess(res.data.data));
+            const userData = res.data.data;
+            dispatch(loginSuccess(userData));
             
-            const role = res.data.data.role;
+            if (userData) {
+                localStorage.setItem("user", JSON.stringify(userData));
+                localStorage.setItem("userRole", userData.role);
+                if (userData.token) {
+                    localStorage.setItem("token", userData.token);
+                }
+            }
+
+            
+            const role = userData?.role?.toUpperCase();
+
+            toast.success("Welcome back! Login Successful.");
 
             if (role === "CUSTOMER") {
                 navigate("/");
@@ -74,10 +89,16 @@ export default function Login() {
                 navigate("/provider");
             } else if (role === "ADMIN") {
                 navigate("/admin");
+            } else {
+                navigate("/");
             }
 
         } catch (err) {
-            alert(err.response?.data?.message || "Login Failed");
+            const errorMessage = err.response?.data?.message 
+                || (err.code === "ERR_NETWORK" || !err.response 
+                    ? "Unable to connect to server. Please check if the backend service is running on port 8080." 
+                    : "Login Failed");
+            toast.error(errorMessage);
         }
     };
 

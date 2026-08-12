@@ -1,138 +1,133 @@
+import { useState, useEffect } from "react";
 import CategoryCard from "./CategoryCard";
+import businessApi from "../../api/businessApi";
 import "./Categories.css";
 
-
 import {
-    FaFan,
-    FaBroom,
-    FaBolt,
-    FaTint,
-    FaCut,
-    FaPaintRoller,
-    FaTools,
-    FaChair
+  FaBroom,
+  FaBolt,
+  FaTint,
+  FaTools,
+  FaPaintRoller,
+  FaBug,
 } from "react-icons/fa";
 
+export default function CategoryGrid({ selectedCategory, onSelectCategory }) {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  const getCategoryIcon = (name = "") => {
+    const n = name.toLowerCase();
+    if (n.includes("plumb")) return <FaTint />;
+    if (n.includes("electr")) return <FaBolt />;
+    if (n.includes("clean")) return <FaBroom />;
+    if (n.includes("appliance") || n.includes("ac")) return <FaTools />;
+    if (n.includes("paint") || n.includes("carpent")) return <FaPaintRoller />;
+    if (n.includes("pest") || n.includes("lawn")) return <FaBug />;
+    return <FaTools />;
+  };
 
-export default function CategoryGrid(){
+  const fallbackCategories = [
+    {
+      id: 1,
+      title: "Plumbing",
+      name: "Plumbing",
+      description: "All kinds of residential and commercial plumbing repair & piping.",
+      icon: <FaTint />,
+    },
+    {
+      id: 2,
+      title: "Electrical",
+      name: "Electrical",
+      description: "Appliance repairs, house wiring, and switchboard installation.",
+      icon: <FaBolt />,
+    },
+    {
+      id: 3,
+      title: "Cleaning",
+      name: "Cleaning",
+      description: "Deep home cleaning, sofa/carpet shampooing, and sanitation.",
+      icon: <FaBroom />,
+    },
+    {
+      id: 4,
+      title: "Appliance Repair",
+      name: "Appliance Repair",
+      description: "Washing machine, refrigerator, microwave, and AC servicing.",
+      icon: <FaTools />,
+    },
+    {
+      id: 5,
+      title: "Painting & Carpentry",
+      name: "Painting & Carpentry",
+      description: "Interior wall painting, wood furniture repair, and custom woodwork.",
+      icon: <FaPaintRoller />,
+    },
+    {
+      id: 6,
+      title: "Pest Control & Lawn Care",
+      name: "Pest Control & Lawn Care",
+      description: "Residential pest eradication, termite control, and garden care.",
+      icon: <FaBug />,
+    },
+  ];
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setLoading(true);
+      try {
+        const res = await businessApi.get("/admin/categories");
+        const list = Array.isArray(res.data?.data) ? res.data.data : [];
+        if (list.length > 0) {
+          setCategories(
+            list.map((c) => ({
+              id: c.id,
+              title: c.name,
+              name: c.name,
+              description: c.description || `Expert ${c.name} services`,
+              icon: getCategoryIcon(c.name),
+            }))
+          );
+        } else {
+          setCategories(fallbackCategories);
+        }
+      } catch (err) {
+        console.warn("Could not fetch DB categories, using fallback:", err);
+        setCategories(fallbackCategories);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    const categories=[
+    fetchCategories();
+  }, []);
 
+  return (
+    <section className="categories" id="categories-section">
+      <h2>Explore Our Categories</h2>
+      <p>Click on any category to view available services</p>
 
-        {
-            id:1,
-            title:"AC Repair",
-            description:"Fast and reliable AC services",
-            icon:<FaFan/>
-        },
-
-
-        {
-            id:2,
-            title:"Home Cleaning",
-            description:"Deep cleaning by experts",
-            icon:<FaBroom/>
-        },
-
-
-        {
-            id:3,
-            title:"Electrician",
-            description:"Electrical repair solutions",
-            icon:<FaBolt/>
-        },
-
-
-        {
-            id:4,
-            title:"Plumbing",
-            description:"Leakage and fitting services",
-            icon:<FaTint/>
-        },
-
-
-        {
-            id:5,
-            title:"Salon At Home",
-            description:"Beauty services at doorstep",
-            icon:<FaCut/>
-        },
-
-
-        // {
-        //     id:6,
-        //     title:"Painting",
-        //     description:"Professional wall painting",
-        //     icon:<FaPaintRoller/>
-        // },
-
-
-        {
-            id:7,
-            title:"Appliance Repair",
-            description:"Repair all appliances",
-            icon:<FaTools/>
-        },
-
-
-        // {
-        //     id:8,
-        //     title:"Carpentry",
-        //     description:"Furniture and wood work",
-        //     icon:<FaChair/>
-        // }
-
-
-    ];
-
-
-
-    return(
-
-
-        <section className="categories">
-
-
-            <h2>
-                Explore Our Services
-            </h2>
-
-
-            <p>
-                Trusted professionals for every home need.
-            </p>
-
-
-
-            <div className="category-grid">
-
-
-                {
-                    categories.map((category)=>(
-
-
-                        <CategoryCard
-
-                            key={category.id}
-
-                            category={category}
-
-                        />
-
-
-                    ))
-                }
-
-
+      {loading ? (
+        <div style={{ textAlign: "center", padding: "2rem", color: "#64748b" }}>
+          Loading categories...
+        </div>
+      ) : (
+        <div className="category-grid">
+          {categories.map((category) => (
+            <div
+              key={category.id}
+              onClick={() => onSelectCategory && onSelectCategory(category.title)}
+              style={{
+                cursor: "pointer",
+                borderRadius: "12px",
+                outline: selectedCategory === category.title ? "3px solid #ff6b00" : "none",
+              }}
+            >
+              <CategoryCard category={category} />
             </div>
-
-
-
-        </section>
-
-
-    );
-
+          ))}
+        </div>
+      )}
+    </section>
+  );
 }

@@ -24,10 +24,24 @@ export default function BookingModal({ service, onClose, onBookingSuccess }) {
     zipCode: "",
   });
 
-  // Booking Schedule
-  const todayStr = new Date().toISOString().split("T")[0];
+  // Booking Schedule - Local Date & Default Future Time
+  const getLocalDateStr = (d = new Date()) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const getFutureTimeStr = () => {
+    const d = new Date(Date.now() + 60 * 60 * 1000);
+    const hours = String(d.getHours()).padStart(2, "0");
+    const minutes = String(d.getMinutes()).padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  const todayStr = getLocalDateStr();
   const [bookingDate, setBookingDate] = useState(todayStr);
-  const [bookingTime, setBookingTime] = useState("10:00");
+  const [bookingTime, setBookingTime] = useState(getFutureTimeStr());
 
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -130,6 +144,22 @@ export default function BookingModal({ service, onClose, onBookingSuccess }) {
     }
     if (!bookingDate || !bookingTime) {
       setErrorMsg("Please choose booking date and time.");
+      return;
+    }
+
+    // Check if selected booking date & time is in the future
+    const [year, month, day] = bookingDate.split("-").map(Number);
+    const [hours, minutes] = bookingTime.split(":").map(Number);
+    const selectedDateTime = new Date(year, month - 1, day, hours, minutes);
+    const now = new Date();
+
+    if (isNaN(selectedDateTime.getTime())) {
+      setErrorMsg("Please enter a valid date and time.");
+      return;
+    }
+
+    if (selectedDateTime <= now) {
+      setErrorMsg("Booking date and time must be in the future from now.");
       return;
     }
 

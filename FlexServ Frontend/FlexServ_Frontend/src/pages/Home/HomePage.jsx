@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../components/Hero/Hero";
 import CategoryGrid from "../../components/Categories/CategoryGrid";
@@ -12,9 +13,29 @@ import BookingModal from "../../components/Booking/BookingModal";
 import "./HomePage.css";
 
 export default function HomePage() {
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [activeBookingService, setActiveBookingService] = useState(null);
+
+  useEffect(() => {
+    const searchFromUrl = searchParams.get("search") || searchParams.get("q") || "";
+    const categoryFromUrl = searchParams.get("category") || searchParams.get("cat") || "All";
+
+    if (searchFromUrl) {
+      setSearchQuery(searchFromUrl);
+    }
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+    }
+
+    if (searchFromUrl || (categoryFromUrl && categoryFromUrl !== "All")) {
+      setTimeout(() => {
+        const el = document.getElementById("services-section");
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 100);
+    }
+  }, [searchParams]);
 
   const handleCategorySelect = (categoryTitle) => {
     if (selectedCategory === categoryTitle) {
@@ -55,7 +76,7 @@ export default function HomePage() {
 
       <WhyChoose />
 
-      <Professionals />
+      {/* <Professionals /> */}
 
       <HowItWorks />
 
