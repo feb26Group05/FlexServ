@@ -55,6 +55,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
+    // Deactivated / Soft-deleted Account Login
+    @ExceptionHandler(AccountDeactivatedException.class)
+    public ResponseEntity<ApiError> handleAccountDeactivated(
+            AccountDeactivatedException ex) {
+
+        ApiError error = new ApiError(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                "Account Deactivated",
+                ex.getMessage());
+
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
     // Resource Not Found
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiError> handleResourceNotFound(

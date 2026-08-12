@@ -1,6 +1,8 @@
 package com.flexserv.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,14 +43,38 @@ public class TransactionServiceImpl implements TransactionService {
         User customer = userRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + request.getCustomerId()));
 
+        if (Boolean.FALSE.equals(customer.getIsActive())) {
+            throw new InvalidBookingStatusException("Cannot create booking: Customer account has been deactivated/soft-deleted.");
+        }
+
         ServiceProvider provider = serviceProviderRepository.findById(request.getProviderId())
                 .orElseThrow(() -> new ResourceNotFoundException("Service Provider not found with ID: " + request.getProviderId()));
+
+        if (Boolean.FALSE.equals(provider.getCompanyAvailable())) {
+            throw new InvalidBookingStatusException("Cannot create booking: Service Provider is currently unavailable.");
+        }
+
+        if (provider.getUser() != null && Boolean.FALSE.equals(provider.getUser().getIsActive())) {
+            throw new InvalidBookingStatusException("Cannot create booking: Service Provider account has been deactivated/soft-deleted.");
+        }
 
         com.flexserv.entity.Service service = serviceRepository.findById(request.getServiceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found with ID: " + request.getServiceId()));
 
         Address address = addressRepository.findById(request.getAddressId())
                 .orElseThrow(() -> new ResourceNotFoundException("Address not found with ID: " + request.getAddressId()));
+
+        if (request.getBookingDate() != null) {
+            LocalDate today = LocalDate.now();
+            if (request.getBookingDate().isBefore(today)) {
+                throw new IllegalArgumentException("Booking date must be in the future");
+            }
+            if (request.getBookingDate().isEqual(today) && request.getBookingTime() != null) {
+                if (request.getBookingTime().isBefore(LocalTime.now())) {
+                    throw new IllegalArgumentException("Booking time must be in the future");
+                }
+            }
+        }
 
         BigDecimal price = (request.getTotalPrice() != null) ? request.getTotalPrice() : service.getPrice();
 
@@ -172,11 +198,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private BookingResponse mapToResponse(Booking booking) {
         String addressDetails = (booking.getAddress() != null)
-                ? String.format("%s, %s, %s %s",
-                booking.getAddress().getStreetAddress(),
-                booking.getAddress().getCity(),
-                booking.getAddress().getState(),
-                booking.getAddress().getZipCode())
+                ? booking.getAddress().getFullAddress()
                 : "";
 
         return new BookingResponse(

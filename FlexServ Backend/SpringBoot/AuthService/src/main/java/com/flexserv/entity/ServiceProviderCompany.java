@@ -1,10 +1,18 @@
 package com.flexserv.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
-import java.util.HashSet;
-import java.util.Set;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -32,27 +40,11 @@ public class ServiceProviderCompany {
     private String bio;
 
     @Column(name = "is_verified")
-    private Boolean isVerified = false;
+    private Boolean isVerified = true;
 
     @Column(name = "rating")
-    private Double rating = 0.0;
+    private Double rating = 5.0;
 
     @Column(name = "company_available")
     private Boolean companyAvailable = true;
-
-    @ManyToMany
-    @JoinTable(
-        name = "provider_services",
-        joinColumns = @JoinColumn(name = "provider_id"),
-        inverseJoinColumns = @JoinColumn(name = "service_id")
-    )
-    private Set<ServiceEntity> services = new HashSet<>();
-
-    public void addService(ServiceEntity service) {
-        this.services.add(service);
-    }
-
-    public void removeService(ServiceEntity service) {
-        this.services.remove(service);
-    }
 }
