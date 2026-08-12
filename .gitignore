@@ -127,3 +127,18 @@ reports/
 *.pid
 *.seed
 *.secret
+
+# =========================
+# .NET / C#
+# =========================
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+_ReSharper*/
+*.DotSettings.user
+*.suo
+*.userprefs
+
