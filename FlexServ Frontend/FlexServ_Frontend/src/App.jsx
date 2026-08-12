@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
@@ -8,26 +8,26 @@ import { restoreSession } from "./redux/authSlice";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Registration/Register";
 import HomePage from "./pages/Home/HomePage";
-import ServicesPage from "./pages/Services/ServicesPage";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
-import UserProfile from "./pages/User/UserProfile"; // Profile component
-import ProtectedRoute from "./components/ProtectedRoute";
+import AdminAccountManagement from "./pages/Admin/AdminAccountManagement";
 import ProviderDashboard from "./pages/Provider/ProviderDashboard";
-import ChatWidget from "./components/ChatWidget/ChatWidget"; // <-- IMPORT CHATBOT WIDGET
+import CustomerProfile from "./pages/Customer/CustomerProfile";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ChatWidget from './components/ChatWidget/ChatWidget';
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const loadUser = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      try {
-        const response = await api.get("/auth/me");
-        dispatch(restoreSession(response.data.user));
-      } catch (error) {
-        localStorage.removeItem("token");
+    const loadUser = () => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        try {
+          dispatch(restoreSession(JSON.parse(storedUser)));
+        } catch (error) {
+          localStorage.removeItem("user");
+          localStorage.removeItem("userRole");
+        }
       }
     };
 
@@ -36,28 +36,26 @@ function App() {
 
   return (
     <BrowserRouter>
-    {/* Global AI Chatbot Widget (Appears on every page) */}
-      <ChatWidget />
+    <ChatWidget></ChatWidget>
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        
-        {/* Landing/Home Page */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/services" element={<ServicesPage />} />
+        <Route path="/services" element={<HomePage />} />
 
-        {/* Protected User Routes */}
+        {/* Fallback Route */}
+        <Route path="*" element={<HomePage />} />
+
+        {/* Customer Profile */}
         <Route
           path="/profile"
           element={
-            <ProtectedRoute>
-              <UserProfile />
+            <ProtectedRoute allowedRole="CUSTOMER">
+              <CustomerProfile />
             </ProtectedRoute>
           }
         />
-        {/* Alias /user route to avoid 404s */}
-        <Route path="/user" element={<Navigate to="/profile" replace />} />
 
         {/* Protected Admin Dashboard */}
         <Route
@@ -69,14 +67,39 @@ function App() {
           }
         />
 
-        {/* Catch-all redirect to Home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        {/* Protected Admin Account & Soft-Delete Hub */}
+        <Route
+          path="/admin/accounts"
+          element={
+            <ProtectedRoute allowedRole="ADMIN">
+              <AdminAccountManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users-control"
+          element={
+            <ProtectedRoute allowedRole="ADMIN">
+              <AdminAccountManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/soft-delete"
+          element={
+            <ProtectedRoute allowedRole="ADMIN">
+              <AdminAccountManagement />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Protected Service Provider Dashboard */}
         <Route
           path="/provider"
           element={
-              <ProtectedRoute allowedRole="PROVIDER">
-                  <ProviderDashboard />
-              </ProtectedRoute>
+            <ProtectedRoute allowedRole="PROVIDER">
+              <ProviderDashboard />
+            </ProtectedRoute>
           }
         />
       </Routes>

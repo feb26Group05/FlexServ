@@ -1,0 +1,368 @@
+.profile-page-container {
+  min-height: 100vh;
+  background: #0f0f0f;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-content-wrapper {
+  flex: 1;
+  max-width: 1100px;
+  margin: 110px auto 50px auto;
+  padding: 0 1.5rem;
+  width: 100%;
+}
+
+.profile-loader {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.1rem;
+  color: #a0a0a0;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 868px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Left Card */
+.profile-summary-card {
+  background: #181818;
+  border-radius: 16px;
+  padding: 2.2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 107, 0, 0.25);
+}
+
+.avatar-circle {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff6b00 0%, #e65c00 100%);
+  color: #ffffff;
+  font-size: 2.2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.2rem auto;
+  box-shadow: 0 8px 20px rgba(255, 107, 0, 0.35);
+}
+
+.profile-summary-card h2 {
+  margin: 0;
+  font-size: 1.35rem;
+  color: #ffffff;
+}
+
+.user-email-text {
+  color: #a0a0a0;
+  font-size: 0.9rem;
+  margin: 0.3rem 0 1rem 0;
+}
+
+.role-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 107, 0, 0.15);
+  color: #ff6b00;
+  border: 1px solid rgba(255, 107, 0, 0.3);
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.meta-info {
+  margin-top: 1.8rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: left;
+  font-size: 0.88rem;
+  color: #cccccc;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.meta-info p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Right Card */
+.profile-details-card {
+  background: #181818;
+  border-radius: 16px;
+  padding: 2.2rem;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 107, 0, 0.25);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1.2rem;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #ffffff;
+}
+
+.card-header p {
+  margin: 0.2rem 0 0 0;
+  color: #a0a0a0;
+  font-size: 0.9rem;
+}
+
+.edit-profile-btn {
+  background: rgba(255, 107, 0, 0.15);
+  color: #ff6b00;
+  border: 1px solid rgba(255, 107, 0, 0.4);
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+}
+
+.edit-profile-btn:hover {
+  background: #ff6b00;
+  color: #ffffff;
+}
+
+.cancel-edit-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #cccccc;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.profile-form-group {
+  margin-bottom: 1.4rem;
+}
+
+.profile-form-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #e0e0e0;
+  margin-bottom: 0.45rem;
+}
+
+.readonly-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.disabled-input {
+  background: #121212 !important;
+  color: #888888 !important;
+  cursor: not-allowed !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  padding-right: 2.8rem !important;
+}
+
+.lock-icon {
+  position: absolute;
+  right: 1rem;
+  color: #ff6b00;
+  font-size: 1rem;
+}
+
+.field-hint {
+  display: block;
+  font-size: 0.78rem;
+  color: #a0a0a0;
+  margin-top: 0.35rem;
+}
+
+.profile-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #222222;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.profile-input:focus {
+  border-color: #ff6b00;
+  box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2);
+}
+
+.read-only-style {
+  background: #1c1c1c;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.form-actions {
+  margin-top: 1.5rem;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #ff6b00 0%, #e65c00 100%);
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.6rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 14px rgba(255, 107, 0, 0.3);
+  transition: all 0.2s;
+}
+
+.save-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 107, 0, 0.45);
+}
+
+/* Addresses Section */
+.addresses-section {
+  margin-top: 2.2rem;
+  padding-top: 1.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.section-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.add-address-btn {
+  background: none;
+  border: 1px solid rgba(255, 107, 0, 0.4);
+  color: #ff6b00;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s;
+}
+
+.add-address-btn:hover {
+  background: #ff6b00;
+  color: #ffffff;
+}
+
+.add-address-form {
+  background: #141414;
+  border: 1px dashed rgba(255, 107, 0, 0.4);
+  border-radius: 10px;
+  padding: 1.2rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.add-address-form input {
+  padding: 0.65rem 0.85rem;
+  background: #222222;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-radius: 6px;
+  font-size: 0.88rem;
+}
+
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.save-address-btn {
+  align-self: flex-end;
+  background: #ff6b00;
+  color: #ffffff;
+  border: none;
+  padding: 0.55rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.addresses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.address-card {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 1rem;
+  background: #222222;
+}
+
+.street-line {
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 0.3rem 0;
+  font-size: 0.9rem;
+}
+
+.city-line {
+  color: #a0a0a0;
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.no-address-text {
+  color: #71717a;
+  font-size: 0.88rem;
+  margin: 0;
+}

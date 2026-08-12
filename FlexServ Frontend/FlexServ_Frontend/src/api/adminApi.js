@@ -1,8 +1,5 @@
-import axios from "axios";
+import businessApi from "./businessApi";
 
-const adminApi = axios.create({
-  baseURL: "http://localhost:8082/api",
-  withCredentials: true,
-});
+const adminApi = businessApi;
 
 export default adminApi;

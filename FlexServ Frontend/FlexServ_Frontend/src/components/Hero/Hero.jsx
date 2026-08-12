@@ -1,24 +1,8 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import "./Hero.css";
 
-export default function Hero() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate();
-
-  const handleSearch = (e) => {
-    e?.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/services?search=${encodeURIComponent(searchTerm.trim())}`);
-    } else {
-      navigate("/services");
-    }
-  };
-
-  const handleTagClick = (tag) => {
-    navigate(`/services?search=${encodeURIComponent(tag)}`);
-  };
+export default function Hero({ searchQuery, onSearchChange, onTagClick }) {
+  const popularTags = ["Plumbing", "Electrical", "Cleaning", "Appliance Repair", "Painting"];
 
   return (
     <section className="hero">
@@ -27,37 +11,35 @@ export default function Hero() {
           Home Services
           <br />
           At Your
-          <span>Doorstep</span>
+          <span> Doorstep</span>
         </h1>
 
         <p>
-          Book trusted professionals for cleaning, beauty, repairs and maintenance in just a few clicks.
+          Book trusted professionals for cleaning, plumbing, electrical, repairs and maintenance in just a few clicks.
         </p>
 
-        <form className="search-box" onSubmit={handleSearch}>
+        <div className="search-box">
           <FaSearch />
           <input
             type="text"
-            placeholder="Search AC Repair, Cleaning..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search Plumbing, Electrical, Cleaning, Appliance Repair..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
           />
-          <button type="submit">Search</button>
-        </form>
+          <button onClick={() => {
+            const el = document.getElementById("services-section");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}>
+            Search
+          </button>
+        </div>
 
         <div className="popular-tags">
-          <button type="button" onClick={() => handleTagClick("Cleaning")}>
-            Cleaning
-          </button>
-          <button type="button" onClick={() => handleTagClick("AC Repair")}>
-            AC Repair
-          </button>
-          <button type="button" onClick={() => handleTagClick("Electrician")}>
-            Electrician
-          </button>
-          <button type="button" onClick={() => handleTagClick("Salon")}>
-            Salon
-          </button>
+          {popularTags.map((tag) => (
+            <button key={tag} onClick={() => onTagClick && onTagClick(tag)}>
+              {tag}
+            </button>
+          ))}
         </div>
       </div>
 
